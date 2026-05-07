@@ -4,569 +4,1018 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>THE BUTCHERY — Hard Techno & Horror</title>
-  <meta name="description" content="Djset hard techno con visual horror. Streaming live e registrazioni.">
-  <script src="[cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-  <link rel="stylesheet" href="[cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css)">
+  <meta name="description" content="Hard techno djset con visual horror. Streaming live e registrazioni. Raw. Unfiltered.">
+  <meta property="og:title" content="THE BUTCHERY — Hard Techno & Horror">
+  <meta property="og:description" content="Hard Techno. Horror Visuals. Raw. Unfiltered.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#000000">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nosifer&family=UnifrakturMaguntia&family=Share+Tech+Mono&family=Creepster&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
   <style>
-    @import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap)');
-    
-    * {
-      -webkit-tap-highlight-color: transparent;
+    :root {
+      --blood:    #9b0000;
+      --blood-bright: #cc0000;
+      --blood-drip: #7a0000;
+      --white:    #f0ebe8;
+      --off-white:#c8bfba;
+      --bg:       #000000;
+      --bg2:      #080404;
+      --surface:  #0f0606;
+      --border:   #1e0a0a;
+      --border2:  #2e1010;
+      --muted:    #5a4040;
+      --chain:    #2a2020;
+      --chain-hi: #3d2f2f;
     }
-    
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #050505;
-      color: #e5e5e5;
-      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--off-white);
+      font-family: 'Share Tech Mono', monospace;
       overflow-x: hidden;
+      cursor: crosshair;
     }
-    
-    /* Scanlines CRT effect */
-    body::before {
+
+    /* ── CUSTOM CURSOR ── */
+    a, button { cursor: crosshair; }
+
+    /* ── SCANLINES ── */
+    body::after {
       content: '';
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      inset: 0;
       background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.1) 2px,
-        rgba(0, 0, 0, 0.1) 4px
+        to bottom,
+        transparent 0, transparent 3px,
+        rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
       );
       pointer-events: none;
       z-index: 9999;
     }
-    
-    /* Blood drip animation */
-    .blood-drip {
+
+    /* ── GLOBAL NOISE ── */
+    .noise {
       position: fixed;
-      top: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, #8b0000, transparent);
-      animation: drip 4s ease-in infinite;
-      opacity: 0.6;
-      z-index: 1;
-    }
-    
-    @keyframes drip {
-      0% { height: 0; opacity: 0.8; }
-      70% { height: 30vh; opacity: 0.6; }
-      100% { height: 0; opacity: 0; }
-    }
-    
-    /* Glitch effect - più aggressivo */
-    .glitch {
-      position: relative;
-      color: #ff0050;
-      font-size: clamp(2.5rem, 10vw, 5rem);
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      will-change: transform;
-    }
-    
-    .glitch::before,
-    .glitch::after {
-      content: attr(data-text);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #050505;
-    }
-    
-    .glitch::before {
-      color: #00ffff;
-      animation: glitch-1 0.3s infinite linear alternate-reverse;
-      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
-      transform: translate(-3px, -2px);
-    }
-    
-    .glitch::after {
-      color: #ff00ff;
-      animation: glitch-2 0.4s infinite linear alternate-reverse;
-      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
-      transform: translate(3px, 2px);
+      inset: 0;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
     }
 
-    @keyframes glitch-1 {
-      0%, 100% { transform: translate(-3px, -2px); }
-      25% { transform: translate(3px, 0); }
-      50% { transform: translate(-2px, 2px); }
-      75% { transform: translate(2px, -1px); }
+    /* ════════════════════════
+       BLOOD DRIPS — top only
+    ════════════════════════ */
+    .drips-container {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 0;
+      z-index: 200;
+      pointer-events: none;
     }
-    
-    @keyframes glitch-2 {
-      0%, 100% { transform: translate(3px, 2px); }
-      25% { transform: translate(-3px, 1px); }
-      50% { transform: translate(2px, -2px); }
-      75% { transform: translate(-2px, 0); }
+
+    .drip {
+      position: absolute;
+      top: 0;
+      width: 4px;
+      border-radius: 0 0 50% 50%;
+      background: linear-gradient(to bottom, #6b0000 0%, #9b0000 60%, #5a0000 100%);
+      animation: dripDown var(--dur, 6s) ease-in var(--delay, 0s) infinite;
+      opacity: 0;
     }
-    
-    /* Flicker effect per titoli */
-    .flicker {
-      animation: flicker 3s infinite;
+
+    .drip::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7a0000;
     }
-    
-    @keyframes flicker {
-      0%, 100% { opacity: 1; }
-      92% { opacity: 1; }
-      93% { opacity: 0.2; }
-      94% { opacity: 1; }
-      96% { opacity: 0.5; }
-      97% { opacity: 1; }
+
+    @keyframes dripDown {
+      0%   { height: 0;    opacity: 0; }
+      10%  { opacity: 1; }
+      70%  { height: var(--len, 120px); opacity: 0.85; }
+      85%  { height: var(--len, 120px); opacity: 0.4; }
+      100% { height: 0;    opacity: 0; }
     }
-    
-    /* Cards */
-    .set-card {
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      background: linear-gradient(145deg, #0a0a0a, #111);
-      border: 1px solid #1a1a1a;
+
+    /* ════════════════════════
+       CHAIN SVG DECORATIONS
+    ════════════════════════ */
+    .chain-h {
+      display: block;
+      width: 100%;
+      height: 20px;
+      overflow: visible;
+    }
+
+    .chain-v-left, .chain-v-right {
+      position: absolute;
+      top: 0;
+      width: 24px;
+      pointer-events: none;
+      opacity: 0.35;
+    }
+
+    .chain-v-left  { left: -12px; }
+    .chain-v-right { right: -12px; }
+
+    /* ════════════════════════
+       NAV
+    ════════════════════════ */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 600;
+      background: rgba(0,0,0,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--blood-drip);
+    }
+
+    /* chain top border on nav */
+    nav::before {
+      content: '';
+      display: block;
+      width: 100%;
+      height: 3px;
+      background: repeating-linear-gradient(
+        to right,
+        var(--chain) 0px, var(--chain) 14px,
+        var(--chain-hi) 14px, var(--chain-hi) 18px,
+        var(--chain) 18px, var(--chain) 32px,
+        transparent 32px, transparent 34px
+      );
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: 1.6rem;
+      color: var(--white);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 20px rgba(155,0,0,0.6);
+      transition: text-shadow 0.3s;
+    }
+
+    .nav-logo:hover {
+      text-shadow: 0 0 30px rgba(200,0,0,0.9), 0 0 60px rgba(155,0,0,0.4);
+    }
+
+    .nav-links {
+      display: flex; gap: 2.2rem; list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; left: 0; right: 0;
+      height: 1px;
+      background: var(--blood-bright);
+      transform: scaleX(0);
+      transition: transform 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .hamburger {
+      display: none;
+      background: none; border: none;
+      color: var(--off-white);
+      font-size: 1.4rem;
+      padding: 0.5rem;
+    }
+
+    /* ════════════════════════
+       MOBILE MENU
+    ════════════════════════ */
+    .mobile-nav {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 550;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.77,0,0.18,1);
+    }
+
+    .mobile-nav.open { transform: translateX(0); }
+
+    .mobile-nav::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(80,0,0,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .mobile-nav a {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: 2.8rem;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.2s, text-shadow 0.2s;
+      position: relative; z-index: 1;
+    }
+
+    .mobile-nav a:hover {
+      color: var(--blood-bright);
+      text-shadow: 0 0 20px rgba(204,0,0,0.6);
+    }
+
+    .mobile-close {
+      position: absolute;
+      top: 1.2rem; right: 1.2rem;
+      background: none; border: none;
+      color: var(--muted); font-size: 1.5rem;
+    }
+
+    /* ════════════════════════
+       HERO
+    ════════════════════════ */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 1.25rem 4rem;
       position: relative;
       overflow: hidden;
     }
-    
+
+    /* Blood pool at bottom */
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 180px;
+      background: radial-gradient(ellipse 80% 100% at 50% 100%, rgba(80,0,0,0.35) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    /* vignette sides */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 120% 60% at 50% 0%, rgba(60,0,0,0.3) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 100% at 0% 50%, rgba(0,0,0,0.7) 0%, transparent 50%),
+        radial-gradient(ellipse 40% 100% at 100% 50%, rgba(0,0,0,0.7) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* Barbed wire top decoration */
+    .barbed-top {
+      position: absolute;
+      top: 60px; left: 0; right: 0;
+      height: 12px;
+      opacity: 0.3;
+      background: repeating-linear-gradient(
+        to right,
+        transparent 0, transparent 20px,
+        var(--chain-hi) 20px, var(--chain-hi) 22px,
+        transparent 22px, transparent 40px
+      );
+    }
+
+    .hero-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--blood-bright);
+      margin-bottom: 1.5rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── BIG TITLE ── */
+    .hero-title {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: clamp(3.8rem, 17vw, 11rem);
+      line-height: 0.85;
+      color: var(--white);
+      position: relative;
+      z-index: 1;
+      text-shadow:
+        2px 2px 0 #000,
+        0 0 40px rgba(155,0,0,0.5),
+        0 0 80px rgba(100,0,0,0.3);
+      animation: titleBreath 6s ease-in-out infinite;
+    }
+
+    @keyframes titleBreath {
+      0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 40px rgba(155,0,0,0.5), 0 0 80px rgba(100,0,0,0.3); }
+      50%       { text-shadow: 2px 2px 0 #000, 0 0 60px rgba(180,0,0,0.7), 0 0 120px rgba(130,0,0,0.4); }
+    }
+
+    .hero-title .blood-word {
+      display: block;
+      color: var(--blood-bright);
+      -webkit-text-stroke: 1px #6b0000;
+      text-shadow:
+        3px 3px 0 #000,
+        0 0 30px rgba(204,0,0,0.8),
+        0 0 60px rgba(155,0,0,0.5);
+      animation: bloodFlicker 7s infinite;
+    }
+
+    @keyframes bloodFlicker {
+      0%,89%,91%,93%,100% { opacity: 1; }
+      90% { opacity: 0.1; }
+      92% { opacity: 0.7; }
+    }
+
+    /* ── CHAIN BELOW TITLE ── */
+    .chain-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 1.5rem auto;
+      opacity: 0.5;
+      position: relative; z-index: 1;
+    }
+
+    .chain-link {
+      display: inline-block;
+      width: 18px; height: 11px;
+      border: 2px solid var(--chain-hi);
+      border-radius: 50%;
+    }
+
+    .chain-link:nth-child(even) {
+      transform: rotate(90deg);
+    }
+
+    .hero-sub {
+      font-size: 0.65rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      position: relative; z-index: 1;
+    }
+
+    .hero-sub .sep { color: var(--blood-bright); margin: 0 0.3em; }
+
+    .hero-ctas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2.5rem;
+      position: relative; z-index: 1;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      background: var(--blood);
+      color: var(--white);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    }
+
+    .btn-primary:hover { background: var(--blood-bright); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 1rem 2rem;
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-outline:hover { border-color: var(--blood-bright); color: var(--blood-bright); }
+
+    /* live dot */
+    .live-indicator {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--blood-bright);
+      animation: pulse 1.4s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(204,0,0,0.7); }
+      50%      { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    /* socials */
+    .hero-socials {
+      display: flex;
+      gap: 1.75rem;
+      margin-top: 3rem;
+      font-size: 1.3rem;
+      position: relative; z-index: 1;
+    }
+
+    .hero-socials a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .hero-socials a:hover {
+      color: var(--white);
+      text-shadow: 0 0 12px rgba(200,0,0,0.6);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.55rem;
+      letter-spacing: 0.4em;
+      color: var(--muted);
+      text-transform: uppercase;
+      animation: bounce 2.5s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    @keyframes bounce {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ════════════════════════
+       SECTION SHELL
+    ════════════════════════ */
+    section { padding: 5rem 1.25rem; }
+    .dark-section { background: var(--bg2); }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ── section header ── */
+    .s-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--blood-bright);
+      margin-bottom: 0.5rem;
+    }
+
+    .s-title {
+      font-family: 'UnifrakturMaguntia', serif;
+      font-size: clamp(2rem, 7vw, 3.5rem);
+      color: var(--white);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(100,0,0,0.4);
+    }
+
+    .s-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 1.25rem 0 2.5rem;
+    }
+
+    .s-divider-line {
+      height: 1px;
+      width: 50px;
+      background: var(--blood);
+    }
+
+    .s-divider-chain {
+      display: flex; gap: 3px;
+    }
+
+    .s-chain-link {
+      display: inline-block;
+      width: 12px; height: 8px;
+      border: 1.5px solid var(--chain-hi);
+      border-radius: 50%;
+      opacity: 0.6;
+    }
+
+    .s-chain-link:nth-child(2n) { transform: rotate(90deg); }
+
+    /* ════════════════════════
+       LATEST SET
+    ════════════════════════ */
+    .latest-frame {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      padding: 1.75rem;
+      position: relative;
+    }
+
+    /* corner blood drops */
+    .latest-frame::before {
+      content: '✦';
+      position: absolute;
+      top: -8px; left: 12px;
+      color: var(--blood);
+      font-size: 1rem;
+      background: var(--bg);
+      padding: 0 4px;
+    }
+
+    .latest-frame iframe { display: block; width: 100%; }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .tag {
+      font-size: 0.6rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+    }
+
+    .tag.accent {
+      border-color: var(--blood-drip);
+      color: var(--blood-bright);
+    }
+
+    /* ════════════════════════
+       SETS GRID
+    ════════════════════════ */
+    .sets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .set-card {
+      background: var(--surface);
+      padding: 1.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .set-card:hover { background: #130505; }
+
+    /* left blood stripe on hover */
     .set-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.1), transparent);
-      transition: left 0.5s;
-    }
-    
-    .set-card:hover::before {
-      left: 100%;
-    }
-    
-    .set-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 0 40px rgba(255, 0, 80, 0.4),
-                  0 0 80px rgba(255, 0, 80, 0.1);
-      border-color: #ff0050;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--blood-bright), var(--blood-drip));
+      transform: scaleY(0);
+      transform-origin: top;
+      transition: transform 0.35s ease;
     }
 
-    /* Mobile menu */
-    .mobile-menu {
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    }
-    
-    .mobile-menu.active {
-      transform: translateX(0);
-    }
-    
-    /* Form styling */
-    input, textarea {
-      background: #0a0a0a;
-      border: 1px solid #222;
-      transition: all 0.3s;
-    }
-    
-    input:focus, textarea:focus {
-      outline: none;
-      border-color: #ff0050;
-      box-shadow: 0 0 20px rgba(255, 0, 80, 0.2);
-    }
-    
-    /* Scroll smooth */
-    html {
-      scroll-behavior: smooth;
-    }
-    
-    /* Pulse button */
-    .pulse-btn {
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0.7); }
-      50% { box-shadow: 0 0 0 15px rgba(255, 0, 80, 0); }
-    }
+    .set-card:hover::before { transform: scaleY(1); }
 
-    /* Section divider */
-    .section-title {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .section-title::after {
+    /* drip from top on hover */
+    .set-card::after {
       content: '';
       position: absolute;
-      bottom: -8px;
-      left: 0;
-      width: 60px;
-      height: 3px;
-      background: #ff0050;
+      top: 0; left: 1.5rem;
+      width: 2px;
+      height: 0;
+      background: linear-gradient(to bottom, var(--blood), transparent);
+      transition: height 0.4s ease;
+      border-radius: 0 0 2px 2px;
     }
-  </style>
-</head>
-<body class="min-h-screen">
 
-  <!-- Blood drips decorativi -->
-  <div class="blood-drip" style="left: 10%; animation-delay: 0s;"></div>
-  <div class="blood-drip" style="left: 25%; animation-delay: 1.5s;"></div>
-  <div class="blood-drip" style="left: 75%; animation-delay: 0.8s;"></div>
-  <div class="blood-drip" style="left: 90%; animation-delay: 2.2s;"></div>
+    .set-card:hover::after { height: 30px; }
 
-  <!-- NAV -->
-  <nav class="border-b border-zinc-800/50 bg-black/90 backdrop-blur-lg fixed w-full z-50">
-    <div class="max-w-6xl mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-      <a href="#" class="text-xl md:text-2xl font-bold tracking-[0.3em] text-white flicker">BUTCHERY</a>
-      
-      <!-- Desktop menu -->
-      <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
-        <a href="#sets" class="hover:text-pink-500 transition-colors">Sets</a>
-        <a href="#video" class="hover:text-pink-500 transition-colors">Video</a>
-        <a href="#about" class="hover:text-pink-500 transition-colors">About</a>
-        <a href="#booking" class="hover:text-pink-500 transition-colors">Booking</a>
-      </div>
-      
-      <!-- Mobile hamburger -->
-      <button id="menuBtn" class="md:hidden text-2xl p-2" aria-label="Menu">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-  </nav>
-  
-  <!-- Mobile menu overlay -->
-  <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-black/98 z-40 flex flex-col items-center justify-center space-y-8 text-2xl uppercase tracking-widest">
-    <button id="closeMenu" class="absolute top-6 right-6 text-3xl" aria-label="Chiudi menu">
-      <i class="fas fa-times"></i>
-    </button>
-    <a href="#sets" class="menu-link hover:text-pink-500 transition-colors">Sets</a>
-    <a href="#video" class="menu-link hover:text-pink-500 transition-colors">Video</a>
-    <a href="#about" class="menu-link hover:text-pink-500 transition-colors">About</a>
-    <a href="#booking" class="menu-link hover:text-pink-500 transition-colors">Booking</a>
-  </div>
+    .card-thumb {
+      aspect-ratio: 16/9;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
 
-  <!-- HERO -->
-  <section class="min-h-screen flex items-center justify-center pt-16 relative overflow-hidden">
-    <!-- Background texture -->
-    <div class="absolute inset-0 opacity-5">
-      <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22[w3.org](http://www.w3.org/2000/svg%22%3E%3Cfilter) id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
-    </div>
-    
-    <div class="text-center px-4 relative z-10">
-      <h1 class="glitch" data-text="THE BUTCHERY">THE BUTCHERY</h1>
-      <p class="text-base md:text-xl mt-6 text-zinc-500 tracking-[0.2em] md:tracking-[0.3em] uppercase">
-        Hard Techno • Raw • Unfiltered
-      </p>
-      
-      <div class="mt-12 md:mt-16 flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="#latest" 
-           class="pulse-btn inline-block px-8 md:px-12 py-4 md:py-5 bg-pink-600 text-white hover:bg-pink-700 transition text-sm md:text-base tracking-widest">
-          <i class="fas fa-play mr-2"></i> LATEST SET
-        </a>
-        <a href="#video" 
-           class="inline-block px-8 md:px-12 py-4 md:py-5 border border-zinc-700 text-zinc-300 hover:border-pink-500 hover:text-pink-500 transition text-sm md:text-base tracking-widest">
-          <i class="fas fa-video mr-2"></i> LIVE STREAM
-        </a>
-      </div>
-      
-      <!-- Social links -->
-      <div class="mt-16 flex justify-center space-x-6 text-2xl text-zinc-600">
-        <a href="#" aria-label="SoundCloud" class="hover:text-orange-500 transition-colors"><i class="fab fa-soundcloud"></i></a>
-        <a href="#" aria-label="YouTube" class="hover:text-red-500 transition-colors"><i class="fab fa-youtube"></i></a>
-        <a href="#" aria-label="Twitch" class="hover:text-purple-500 transition-colors"><i class="fab fa-twitch"></i></a>
-        <a href="#" aria-label="Instagram" class="hover:text-pink-500 transition-colors"><i class="fab fa-instagram"></i></a>
-      </div>
-    </div>
-    
-    <!-- Scroll indicator -->
-    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-600 animate-bounce">
-      <i class="fas fa-chevron-down text-2xl"></i>
-    </div>
-  </section>
+    .card-thumb i {
+      font-size: 2.8rem;
+      color: #1a0505;
+      transition: color 0.3s, text-shadow 0.3s;
+    }
 
-  <!-- LATEST SET -->
-  <section id="latest" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
-    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">LATEST MASSACRE</h2>
-    
-    <div class="bg-zinc-900/50 p-4 md:p-6 border border-zinc-800 rounded-lg">
-      <!-- SoundCloud embed placeholder -->
-      <iframe 
-        width="100%" 
-        height="166" 
-        scrolling="no" 
-        frameborder="no" 
-        loading="lazy"
-        allow="autoplay"
-        src="[w.soundcloud.com](https://w.soundcloud.com/player/?url=https://soundcloud.com/tuoutente/il-tuo-set&color=%23ff0050&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false)">
-      </iframe>
-      
-      <div class="mt-4 flex flex-wrap gap-2">
-        <span class="px-3 py-1 bg-pink-600/20 text-pink-400 text-xs uppercase tracking-wider rounded">Hard Techno</span>
-        <span class="px-3 py-1 bg-zinc-800 text-zinc-400 text-xs uppercase tracking-wider rounded">145 BPM</span>
-        <span class="px-3 py-1 bg-zinc-800 text-zinc-400 text-xs uppercase tracking-wider rounded">2h 30min</span>
-      </div>
-    </div>
-  </section>
+    .set-card:hover .card-thumb i {
+      color: var(--blood-drip);
+      text-shadow: 0 0 20px rgba(155,0,0,0.6);
+    }
 
-  <!-- ALL SETS -->
-  <section id="sets" class="bg-zinc-950/50 py-16 md:py-24">
-    <div class="max-w-6xl mx-auto px-4 md:px-6">
-      <h2 class="section-title text-2xl md:text-3xl font-bold mb-12">ALL SETS</h2>
-      
-      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        
-        <!-- Set card template - replica per ogni set -->
-        <article class="set-card p-5 rounded-lg group cursor-pointer">
-          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
-            <i class="fas fa-skull text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">2:14:00</span>
-          </div>
-          <time class="text-pink-500 text-xs uppercase tracking-wider">01.01.2026</time>
-          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Rave in The Abyss</h3>
-          <p class="text-zinc-500 text-sm mt-1">Hard Techno / Industrial</p>
-          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
-            <i class="fas fa-play mr-2"></i> Play Set
-          </button>
-        </article>
-        
-        <article class="set-card p-5 rounded-lg group cursor-pointer">
-          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
-            <i class="fas fa-ghost text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">1:45:00</span>
-          </div>
-          <time class="text-pink-500 text-xs uppercase tracking-wider">15.12.2025</time>
-          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Midnight Slaughter</h3>
-          <p class="text-zinc-500 text-sm mt-1">Schranz / Hard Techno</p>
-          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
-            <i class="fas fa-play mr-2"></i> Play Set
-          </button>
-        </article>
-        
-        <article class="set-card p-5 rounded-lg group cursor-pointer">
-          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
-            <i class="fas fa-spider text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">3:00:00</span>
-          </div>
-          <time class="text-pink-500 text-xs uppercase tracking-wider">01.11.2025</time>
-          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Halloween Massacre</h3>
-          <p class="text-zinc-500 text-sm mt-1">Industrial / EBM</p>
-          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
-            <i class="fas fa-play mr-2"></i> Play Set
-          </button>
-        </article>
-        
-      </div>
-      
-      <!-- Load more -->
-      <div class="text-center mt-12">
-        <button class="px-8 py-3 border border-zinc-700 text-zinc-400 hover:border-pink-500 hover:text-pink-500 transition uppercase tracking-widest text-sm">
-          Load More <i class="fas fa-chevron-down ml-2"></i>
-        </button>
-      </div>
-    </div>
-  </section>
+    /* blood drip inside thumb on hover */
+    .card-thumb::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%;
+      width: 3px; height: 0;
+      background: linear-gradient(to bottom, rgba(155,0,0,0.8), transparent);
+      transform: translateX(-50%);
+      transition: height 0.5s 0.1s;
+      border-radius: 0 0 50% 50%;
+    }
 
-  <!-- VIDEO / STREAM -->
-  <section id="video" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
-    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">LIVE & VIDEO</h2>
-    
-    <div class="grid lg:grid-cols-2 gap-8">
-      <!-- Main video -->
-      <div class="lg:col-span-2">
-        <div class="aspect-video bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center relative overflow-hidden">
-          <!-- Placeholder - sostituisci con embed YouTube/Twitch -->
-          <div class="text-center">
-            <i class="fas fa-video text-6xl text-zinc-700 mb-4"></i>
-            <p class="text-zinc-500 uppercase tracking-wider text-sm">Prossimo stream</p>
-            <p class="text-2xl font-bold mt-2 text-pink-500">COMING SOON</p>
-          </div>
-          
-          <!-- Live badge (mostra quando sei live) -->
-          <!-- <div class="absolute top-4 left-4 flex items-center bg-red-600 px-3 py-1 rounded text-sm">
-            <span class="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-            LIVE
-          </div> -->
-        </div>
-      </div>
-      
-      <!-- Video thumbnails -->
-      <div class="set-card p-4 rounded-lg cursor-pointer">
-        <div class="aspect-video bg-zinc-900 rounded mb-3 flex items-center justify-center">
-          <i class="fab fa-youtube text-4xl text-red-600"></i>
-        </div>
-        <h3 class="font-bold">Warehouse Session #01</h3>
-        <p class="text-zinc-500 text-sm">Full video set + visuals</p>
-      </div>
-      
-      <div class="set-card p-4 rounded-lg cursor-pointer">
-        <div class="aspect-video bg-zinc-900 rounded mb-3 flex items-center justify-center">
-          <i class="fab fa-twitch text-4xl text-purple-500"></i>
-        </div>
-        <h3 class="font-bold">Twitch Channel</h3>
-        <p class="text-zinc-500 text-sm">Live ogni venerdì</p>
-      </div>
-    </div>
-  </section>
+    .set-card:hover .card-thumb::before { height: 40%; }
 
-  <!-- ABOUT -->
-  <section id="about" class="bg-zinc-950/50 py-16 md:py-24">
-    <div class="max-w-6xl mx-auto px-4 md:px-6">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
-        <div>
-          <h2 class="section-title text-2xl md:text-3xl font-bold mb-8">ABOUT THE BUTCHERY</h2>
-          <div class="space-y-4 text-zinc-400 leading-relaxed">
-            <p>
-              <span class="text-pink-500 font-bold">THE BUTCHERY</span> è uno studio di streaming e registrazione dedicato ai suoni più crudi e viscerali della scena hard techno.
-            </p>
-            <p>
-              Ogni set è un'esperienza audiovisiva che fonde beat martellanti con visual horror ispirati al cinema di genere, creando un'atmosfera unica e immersiva.
-            </p>
-            <p>
-              Trasmettiamo live ogni settimana, portando il rave direttamente a casa tua.
-            </p>
-          </div>
-          
-          <div class="mt-8 flex flex-wrap gap-4">
-            <div class="text-center">
-              <div class="text-3xl font-bold text-pink-500">50+</div>
-              <div class="text-zinc-500 text-sm uppercase tracking-wider">Sets</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-pink-500">10K+</div>
-              <div class="text-zinc-500 text-sm uppercase tracking-wider">Plays</div>
-            </div>
-            <div class="text-center">
-              <div class="text-3xl font-bold text-pink-500">2K+</div>
-              <div class="text-zinc-500 text-sm uppercase tracking-wider">Followers</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="relative">
-          <div class="aspect-square bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center">
-            <!-- Placeholder per foto/logo -->
-            <i class="fas fa-skull-crossbones text-8xl text-zinc-800"></i>
-          </div>
-          <div class="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-pink-600 rounded-lg"></div>
-        </div>
-      </div>
-    </div>
-  </section>
+    .card-duration {
+      position: absolute;
+      bottom: 0.5rem; right: 0.5rem;
+      font-size: 0.58rem;
+      background: rgba(0,0,0,0.85);
+      padding: 0.2rem 0.5rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      border-left: 1px solid var(--blood-drip);
+    }
 
-  <!-- BOOKING -->
-  <section id="booking" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
-    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">BOOKING & CONTACT</h2>
-    
-    <div class="grid md:grid-cols-2 gap-12">
-      <div>
-        <p class="text-zinc-400 mb-6">
-          Disponibili per live streaming, registrazioni in studio, collaborazioni e eventi. Compila il form o scrivici direttamente.
-        </p>
-        
-        <div class="space-y-4">
-          <a href="mailto:booking@thebutchery.com" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
-            <i class="fas fa-envelope w-8 text-pink-600"></i>
-            booking@thebutchery.com
-          </a>
-          <a href="#" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
-            <i class="fab fa-instagram w-8 text-pink-600"></i>
-            @thebutchery
-          </a>
-          <a href="#" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
-            <i class="fab fa-telegram w-8 text-pink-600"></i>
-            @thebutchery_booking
-          </a>
-        </div>
-      </div>
-      
-      <form class="space-y-4" action="#" method="POST">
-        <input 
-          type="text" 
-          name="name"
-          placeholder="Nome" 
-          required
-          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500">
-        <input 
-          type="email" 
-          name="email"
-          placeholder="Email" 
-          required
-          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500">
-        <select 
-          name="type"
-          class="w-full px-4 py-3 rounded text-zinc-400 bg-[#0a0a0a] border border-zinc-800">
-          <option value="">Tipo di richiesta</option>
-          <option value="booking">Booking live</option>
-          <option value="collab">Collaborazione</option>
-          <option value="studio">Session in studio</option>
-          <option value="other">Altro</option>
-        </select>
-        <textarea 
-          name="message"
-          placeholder="Messaggio" 
-          rows="4"
-          required
-          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500 resize-none"></textarea>
-        <button 
-          type="submit"
-          class="w-full py-4 bg-pink-600 hover:bg-pink-700 transition text-white uppercase tracking-widest font-bold rounded">
-          <i class="fas fa-paper-plane mr-2"></i> Invia
-        </button>
-      </form>
-    </div>
-  </section>
+    .card-date {
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--blood-bright);
+      text-transform: uppercase;
+    }
 
-  <!-- FOOTER -->
-  <footer class="border-t border-zinc-800/50 py-12">
-    <div class="max-w-6xl mx-auto px-4 md:px-6">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
-        <div class="text-center md:text-left">
-          <p class="text-xl font-bold tracking-[0.3em] flicker">THE BUTCHERY</p>
-          <p class="text-zinc-500 text-sm mt-1">Raw techno. No compromise.</p>
-        </div>
-        
-        <div class="flex space-x-6 text-xl text-zinc-600">
-          <a href="#" aria-label="SoundCloud" class="hover:text-orange-500 transition-colors"><i class="fab fa-soundcloud"></i></a>
-          <a href="#" aria-label="YouTube" class="hover:text-red-500 transition-colors"><i class="fab fa-youtube"></i></a>
-          <a href="#" aria-label="Twitch" class="hover:text-purple-500 transition-colors"><i class="fab fa-twitch"></i></a>
-          <a href="#" aria-label="Instagram" class="hover:text-pink-500 transition-colors"><i class="fab fa-instagram"></i></a>
-        </div>
-      </div>
-      
-      <div class="mt-8 pt-8 border-t border-zinc-800/50 text-center text-zinc-600 text-sm">
-        <p>© 2026 THE BUTCHERY — All rights reserved.</p>
-      </div>
-    </div>
-  </footer>
+    .card-title {
+      font-family: 'Nosifer', cursive;
+      font-size: 1rem;
+      color: var(--white);
+      margin: 0.4rem 0 0.25rem;
+      line-height: 1.2;
+      letter-spacing: 0.04em;
+    }
 
-  <!-- JavaScript per menu mobile -->
-  <script>
-    const menuBtn = document.getElementById('menuBtn');
-    const closeMenu = document.getElementById('closeMenu');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const menuLinks = document.querySelectorAll('.menu-link');
-    
-    menuBtn.addEventListener('click', () => {
-      mobileMenu.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    });
-    
-    closeMenu.addEventListener('click', () => {
-      mobileMenu.classList.remove('active');
-      document.body.style.overflow = '';
-    });
-    
-    menuLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        document.body.style.overflow = '';
-      });
-    });
-  </script>
+    .card-genre {
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
 
-</body>
-</html>
+    .card-play {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: none; border: none;
+      margin-top: 1rem;
+      font-family: 'Share Tech Mono', monospace;
+      transition: color 0.2s;
+    }
+
+    .card-play:hover { color: var(--blood-bright); }
+
+    .load-more-wrap { text-align: center; margin-top: 2rem; }
+
+    /* ════════════════════════
+       VIDEO / STREAM
+    ════════════════════════ */
+    .video-shell {
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-main-area {
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .video-placeholder {
+      text-align: center;
+    }
+
+    .video-placeholder i {
+      display: block;
+      font-size: 3.5rem;
+      color: #1a0505;
+      margin-bottom: 1rem;
+    }
+
+    .video-placeholder p {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .video-placeholder .coming {
+      font-family: 'Nosifer', cursive;
+      font-size: 1.6rem;
+      color: var(--blood-bright);
+      margin-top: 0.5rem;
+      letter-spacing: 0.1em;
+      text-shadow: 0 0 20px rgba(204,0,0,0.5);
+    }
+
+    .live-badge-overlay {
+      position: absolute;
+      top: 1rem; left: 1rem;
+      display: none; /* remove display:none when live */
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--blood);
+      padding: 0.35rem 0.8rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+    }
+
+    .live-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--white);
+      animation: pulse 1.2s infinite;
+    }
+
+    .platform-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+    }
+
+    .platform-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: var(--surface);
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.25s;
+    }
+
+    .platform-card:hover { background: #130505; }
+
+    .platform-icon {
+      width: 52px; height: 52px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+      background: var(--bg2);
+      position: relative;
+    }
+
+    /* drip from platform icon */
+    .platform-icon::after {
+      content: '';
+      position: absolute;
+      bottom: -8px; left: 50%;
+      transform: translateX(-50%);
+      width: 2px; height: 0;
+      background: linear-gradient(to bottom, var(--blood), transparent);
+      transition: height 0.3s;
+      border-radius: 0 0 2px 2px;
+    }
+
+    .platform-card:hover .platform-icon::after { height: 8px; }
+
+    .platform-title {
+      font-family: 'Nosifer', cursive;
+      font-size: 0.85rem;
+      color: var(--white);
+      letter-spacing: 0.04em;
+    }
+
+    .platform-sub {
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+      letter-spacing: 0.1em;
+    }
+
+    /* ════════════════════════
+       ABOUT
+    ════════════════════════ */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 0.85rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .about-text p strong { color: var(--blood-bright); font-style: italic; }
+
+    .stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat-num {
+      font-family: 'Nosifer', cursive;
+      font-size: 2rem;
+      color: var(--blood-bright);
+      line-height: 1;
+      text-shadow: 0 0 15px rgba(204,0,0,0.4);
+    }
+
+    .stat-label {
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── gothic frame / visual box ── */
+    .about-visual { position: relative; }
+
+    .gothic-frame {
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .gothic-frame::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, rgba(80,0,0,0.2) 0%, transparent 70%);
+    }
+
+    .gothic-frame i {
+      font-size: 6rem;
+      color: #1c0404;
+      position: relative; z-index: 1;
+      text-shadow: 0 0 30px rgba(80,0,0,0.3);
+      animation: iconBreath 5s ease-in-out infinite;
+    }
+
+    @keyframes iconBreath {
+      0%,100% { opacity: 0.5; transform: scale(1); }
+      50%      { opacity: 0.8; transform: scale(1.03); }
+    }
+
+    /* corner ornaments */
+    .gothic-frame::after {
+      content: '✦ ✦ ✦';
+      position: absolute;
+      bottom: 0.75rem; left: 0; right: 0;
+      text-align: center;
+      color: var(--blood-drip);
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      opacity: 0.5;
+    }
+
+    /* chains hanging from frame */
+    .frame-chains {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 40px;
+    }
+
+    .f-chain {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .f-chain-link {
+      width: 8px; height: 12px;
+      border: 1.5px solid var(--chain-hi);
+      border-radius: 50%;
+      opacity: 0.4;
+    }
+
+    .f-chain-link:nth-child(2n) { transform: rotate(90deg); }
+
+    .frame-accent {
+      position: absolute;
+      bottom: -10px; right: -10px;
+      width: 70px; height: 70px;
+      border: 1px solid var(--blood-drip);
+      opacity: 0.4;
+    }
+
+    /* ════════════════════════
+       BOOKING
+    ════════════════════════ */
+    .booking-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .contact-info p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.75rem;
+    }
+
+    .contact-links { display: flex; flex-direction: column; gap: 0.9rem; }
+
+    .contact-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.75rem;
+      color: var(--off-white);
+      text-decoration: none;
+      transition: color 0.2s;
+      letter-spacing: 0.05em;
+    }
+
+    .contact-links a i {
+      width: 1.2rem; color: var(--blood-bright);
+    }
+
+    .contact-links a:hover { color: var(--blood-bright); }
+
+    .form-field {
+      width: 100%;
+      background
