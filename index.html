@@ -3,23 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BUTCHERY</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <title>THE BUTCHERY — Hard Techno & Horror</title>
+  <meta name="description" content="Djset hard techno con visual horror. Streaming live e registrazioni.">
+  <script src="[cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <link rel="stylesheet" href="[cdnjs.cloudflare.com](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css)">
   <style>
-    body {
-      background: #0a0a0a;
-      color: #e5e5e5;
-      font-family: 'Courier New', monospace;
+    @import url('[fonts.googleapis.com](https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap)');
+    
+    * {
+      -webkit-tap-highlight-color: transparent;
     }
     
+    body {
+      background: #050505;
+      color: #e5e5e5;
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      overflow-x: hidden;
+    }
+    
+    /* Scanlines CRT effect */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.1) 2px,
+        rgba(0, 0, 0, 0.1) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+    
+    /* Blood drip animation */
+    .blood-drip {
+      position: fixed;
+      top: 0;
+      width: 3px;
+      background: linear-gradient(to bottom, #8b0000, transparent);
+      animation: drip 4s ease-in infinite;
+      opacity: 0.6;
+      z-index: 1;
+    }
+    
+    @keyframes drip {
+      0% { height: 0; opacity: 0.8; }
+      70% { height: 30vh; opacity: 0.6; }
+      100% { height: 0; opacity: 0; }
+    }
+    
+    /* Glitch effect - più aggressivo */
     .glitch {
       position: relative;
-      color: #ff00ff;
-      font-size: 4.5rem;
+      color: #ff0050;
+      font-size: clamp(2.5rem, 10vw, 5rem);
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.05em;
+      will-change: transform;
     }
     
     .glitch::before,
@@ -30,107 +76,497 @@
       left: 0;
       width: 100%;
       height: 100%;
+      background: #050505;
     }
     
     .glitch::before {
       color: #00ffff;
-      animation: glitch-anim 2s infinite linear alternate-reverse;
-      left: 2px;
-      text-shadow: -2px 0 #ff00ff;
+      animation: glitch-1 0.3s infinite linear alternate-reverse;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+      transform: translate(-3px, -2px);
     }
     
     .glitch::after {
       color: #ff00ff;
-      animation: glitch-anim2 3s infinite linear alternate-reverse;
-      left: -2px;
-      text-shadow: 2px 0 #00ffff;
+      animation: glitch-2 0.4s infinite linear alternate-reverse;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+      transform: translate(3px, 2px);
     }
 
-    @keyframes glitch-anim {
-      0% { clip: rect(20px, 9999px, 50px, 0); }
-      100% { clip: rect(80px, 9999px, 120px, 0); }
+    @keyframes glitch-1 {
+      0%, 100% { transform: translate(-3px, -2px); }
+      25% { transform: translate(3px, 0); }
+      50% { transform: translate(-2px, 2px); }
+      75% { transform: translate(2px, -1px); }
     }
     
+    @keyframes glitch-2 {
+      0%, 100% { transform: translate(3px, 2px); }
+      25% { transform: translate(-3px, 1px); }
+      50% { transform: translate(2px, -2px); }
+      75% { transform: translate(-2px, 0); }
+    }
+    
+    /* Flicker effect per titoli */
+    .flicker {
+      animation: flicker 3s infinite;
+    }
+    
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      92% { opacity: 1; }
+      93% { opacity: 0.2; }
+      94% { opacity: 1; }
+      96% { opacity: 0.5; }
+      97% { opacity: 1; }
+    }
+    
+    /* Cards */
     .set-card {
-      transition: all 0.3s ease;
-      background: #111111;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: linear-gradient(145deg, #0a0a0a, #111);
+      border: 1px solid #1a1a1a;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .set-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 0, 80, 0.1), transparent);
+      transition: left 0.5s;
+    }
+    
+    .set-card:hover::before {
+      left: 100%;
     }
     
     .set-card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 0 30px rgba(255, 0, 80, 0.6);
+      transform: translateY(-8px);
+      box-shadow: 0 0 40px rgba(255, 0, 80, 0.4),
+                  0 0 80px rgba(255, 0, 80, 0.1);
       border-color: #ff0050;
     }
 
-    .neon-text {
-      text-shadow: 0 0 10px #ff00ff,
-                   0 0 20px #ff00ff;
+    /* Mobile menu */
+    .mobile-menu {
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .mobile-menu.active {
+      transform: translateX(0);
+    }
+    
+    /* Form styling */
+    input, textarea {
+      background: #0a0a0a;
+      border: 1px solid #222;
+      transition: all 0.3s;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #ff0050;
+      box-shadow: 0 0 20px rgba(255, 0, 80, 0.2);
+    }
+    
+    /* Scroll smooth */
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    /* Pulse button */
+    .pulse-btn {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0.7); }
+      50% { box-shadow: 0 0 0 15px rgba(255, 0, 80, 0); }
+    }
+
+    /* Section divider */
+    .section-title {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: #ff0050;
     }
   </style>
 </head>
-<body class="min-h-screen pb-20">
+<body class="min-h-screen">
+
+  <!-- Blood drips decorativi -->
+  <div class="blood-drip" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="blood-drip" style="left: 25%; animation-delay: 1.5s;"></div>
+  <div class="blood-drip" style="left: 75%; animation-delay: 0.8s;"></div>
+  <div class="blood-drip" style="left: 90%; animation-delay: 2.2s;"></div>
 
   <!-- NAV -->
-  <nav class="border-b border-zinc-800 bg-black/80 backdrop-blur-md fixed w-full z-50">
-    <div class="max-w-6xl mx-auto px-6 py-5 flex justify-between items-center">
-      <h1 class="text-2xl font-bold tracking-widest">BUTCHERY</h1>
-      <div class="space-x-8 text-sm uppercase tracking-widest">
-        <a href="#sets" class="hover:text-pink-500 transition">SETS</a>
-        <a href="#video" class="hover:text-pink-500 transition">VIDEO</a>
-        <a href="#about" class="hover:text-pink-500 transition">ABOUT</a>
-        <a href="#booking" class="hover:text-pink-500 transition">BOOKING</a>
+  <nav class="border-b border-zinc-800/50 bg-black/90 backdrop-blur-lg fixed w-full z-50">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
+      <a href="#" class="text-xl md:text-2xl font-bold tracking-[0.3em] text-white flicker">BUTCHERY</a>
+      
+      <!-- Desktop menu -->
+      <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest">
+        <a href="#sets" class="hover:text-pink-500 transition-colors">Sets</a>
+        <a href="#video" class="hover:text-pink-500 transition-colors">Video</a>
+        <a href="#about" class="hover:text-pink-500 transition-colors">About</a>
+        <a href="#booking" class="hover:text-pink-500 transition-colors">Booking</a>
       </div>
+      
+      <!-- Mobile hamburger -->
+      <button id="menuBtn" class="md:hidden text-2xl p-2" aria-label="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
   </nav>
+  
+  <!-- Mobile menu overlay -->
+  <div id="mobileMenu" class="mobile-menu fixed inset-0 bg-black/98 z-40 flex flex-col items-center justify-center space-y-8 text-2xl uppercase tracking-widest">
+    <button id="closeMenu" class="absolute top-6 right-6 text-3xl" aria-label="Chiudi menu">
+      <i class="fas fa-times"></i>
+    </button>
+    <a href="#sets" class="menu-link hover:text-pink-500 transition-colors">Sets</a>
+    <a href="#video" class="menu-link hover:text-pink-500 transition-colors">Video</a>
+    <a href="#about" class="menu-link hover:text-pink-500 transition-colors">About</a>
+    <a href="#booking" class="menu-link hover:text-pink-500 transition-colors">Booking</a>
+  </div>
 
   <!-- HERO -->
-  <section class="min-h-screen flex items-center justify-center pt-20 border-b border-zinc-900">
-    <div class="text-center">
+  <section class="min-h-screen flex items-center justify-center pt-16 relative overflow-hidden">
+    <!-- Background texture -->
+    <div class="absolute inset-0 opacity-5">
+      <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22[w3.org](http://www.w3.org/2000/svg%22%3E%3Cfilter) id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="text-center px-4 relative z-10">
       <h1 class="glitch" data-text="THE BUTCHERY">THE BUTCHERY</h1>
-      <p class="text-xl mt-4 text-zinc-400 tracking-[4px] uppercase">Techno • Raw • Unfiltered</p>
+      <p class="text-base md:text-xl mt-6 text-zinc-500 tracking-[0.2em] md:tracking-[0.3em] uppercase">
+        Hard Techno • Raw • Unfiltered
+      </p>
       
-      <div class="mt-16">
+      <div class="mt-12 md:mt-16 flex flex-col sm:flex-row gap-4 justify-center">
         <a href="#latest" 
-           class="inline-block px-12 py-6 border border-pink-600 text-pink-500 hover:bg-pink-600 hover:text-black transition text-lg tracking-widest">
-          LISTEN LATEST SET →
+           class="pulse-btn inline-block px-8 md:px-12 py-4 md:py-5 bg-pink-600 text-white hover:bg-pink-700 transition text-sm md:text-base tracking-widest">
+          <i class="fas fa-play mr-2"></i> LATEST SET
+        </a>
+        <a href="#video" 
+           class="inline-block px-8 md:px-12 py-4 md:py-5 border border-zinc-700 text-zinc-300 hover:border-pink-500 hover:text-pink-500 transition text-sm md:text-base tracking-widest">
+          <i class="fas fa-video mr-2"></i> LIVE STREAM
         </a>
       </div>
+      
+      <!-- Social links -->
+      <div class="mt-16 flex justify-center space-x-6 text-2xl text-zinc-600">
+        <a href="#" aria-label="SoundCloud" class="hover:text-orange-500 transition-colors"><i class="fab fa-soundcloud"></i></a>
+        <a href="#" aria-label="YouTube" class="hover:text-red-500 transition-colors"><i class="fab fa-youtube"></i></a>
+        <a href="#" aria-label="Twitch" class="hover:text-purple-500 transition-colors"><i class="fab fa-twitch"></i></a>
+        <a href="#" aria-label="Instagram" class="hover:text-pink-500 transition-colors"><i class="fab fa-instagram"></i></a>
+      </div>
+    </div>
+    
+    <!-- Scroll indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 text-zinc-600 animate-bounce">
+      <i class="fas fa-chevron-down text-2xl"></i>
     </div>
   </section>
 
   <!-- LATEST SET -->
-  <section id="latest" class="max-w-6xl mx-auto px-6 py-20">
-    <h2 class="text-3xl font-bold mb-10 border-l-4 border-pink-600 pl-4">LATEST MASSACRE</h2>
-    <!-- Incolla qui l'embed SoundCloud o Mixcloud -->
-    <div class="bg-black p-4 border border-zinc-800">
-      <!-- Esempio SoundCloud embed -->
-      <iframe width="100%" height="166" scrolling="no" frameborder="no" 
-        src="https://w.soundcloud.com/player/?url=https://soundcloud.com/tuoutente/il-tuo-set&amp;color=%23ff0050">
+  <section id="latest" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
+    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">LATEST MASSACRE</h2>
+    
+    <div class="bg-zinc-900/50 p-4 md:p-6 border border-zinc-800 rounded-lg">
+      <!-- SoundCloud embed placeholder -->
+      <iframe 
+        width="100%" 
+        height="166" 
+        scrolling="no" 
+        frameborder="no" 
+        loading="lazy"
+        allow="autoplay"
+        src="[w.soundcloud.com](https://w.soundcloud.com/player/?url=https://soundcloud.com/tuoutente/il-tuo-set&color=%23ff0050&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false)">
       </iframe>
+      
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="px-3 py-1 bg-pink-600/20 text-pink-400 text-xs uppercase tracking-wider rounded">Hard Techno</span>
+        <span class="px-3 py-1 bg-zinc-800 text-zinc-400 text-xs uppercase tracking-wider rounded">145 BPM</span>
+        <span class="px-3 py-1 bg-zinc-800 text-zinc-400 text-xs uppercase tracking-wider rounded">2h 30min</span>
+      </div>
     </div>
   </section>
 
   <!-- ALL SETS -->
-  <section id="sets" class="max-w-6xl mx-auto px-6 py-20 bg-zinc-950">
-    <h2 class="text-3xl font-bold mb-12">ALL SETS</h2>
-    
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      <!-- Ripeti questo blocco per ogni set -->
-      <div class="set-card border border-zinc-800 p-6 group">
-        <div class="aspect-video bg-zinc-900 mb-4 flex items-center justify-center text-4xl">🎛️</div>
-        <h3 class="text-lg font-bold">01.01.2026 - Rave in The Abyss</h3>
-        <p class="text-zinc-500 text-sm">2h 14min • Techno / Hard Techno</p>
-        <button class="mt-4 text-pink-500 hover:text-pink-400 text-sm uppercase tracking-widest">
-          ▶️ Play Full Set
+  <section id="sets" class="bg-zinc-950/50 py-16 md:py-24">
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+      <h2 class="section-title text-2xl md:text-3xl font-bold mb-12">ALL SETS</h2>
+      
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        
+        <!-- Set card template - replica per ogni set -->
+        <article class="set-card p-5 rounded-lg group cursor-pointer">
+          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
+            <i class="fas fa-skull text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">2:14:00</span>
+          </div>
+          <time class="text-pink-500 text-xs uppercase tracking-wider">01.01.2026</time>
+          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Rave in The Abyss</h3>
+          <p class="text-zinc-500 text-sm mt-1">Hard Techno / Industrial</p>
+          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
+            <i class="fas fa-play mr-2"></i> Play Set
+          </button>
+        </article>
+        
+        <article class="set-card p-5 rounded-lg group cursor-pointer">
+          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
+            <i class="fas fa-ghost text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">1:45:00</span>
+          </div>
+          <time class="text-pink-500 text-xs uppercase tracking-wider">15.12.2025</time>
+          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Midnight Slaughter</h3>
+          <p class="text-zinc-500 text-sm mt-1">Schranz / Hard Techno</p>
+          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
+            <i class="fas fa-play mr-2"></i> Play Set
+          </button>
+        </article>
+        
+        <article class="set-card p-5 rounded-lg group cursor-pointer">
+          <div class="aspect-video bg-zinc-900 mb-4 rounded overflow-hidden flex items-center justify-center relative">
+            <i class="fas fa-spider text-5xl text-zinc-700 group-hover:text-pink-600 transition-colors"></i>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <span class="absolute bottom-2 right-2 bg-black/80 px-2 py-1 text-xs">3:00:00</span>
+          </div>
+          <time class="text-pink-500 text-xs uppercase tracking-wider">01.11.2025</time>
+          <h3 class="text-lg font-bold mt-1 group-hover:text-pink-400 transition-colors">Halloween Massacre</h3>
+          <p class="text-zinc-500 text-sm mt-1">Industrial / EBM</p>
+          <button class="mt-4 flex items-center text-zinc-400 hover:text-pink-500 text-sm uppercase tracking-widest transition-colors">
+            <i class="fas fa-play mr-2"></i> Play Set
+          </button>
+        </article>
+        
+      </div>
+      
+      <!-- Load more -->
+      <div class="text-center mt-12">
+        <button class="px-8 py-3 border border-zinc-700 text-zinc-400 hover:border-pink-500 hover:text-pink-500 transition uppercase tracking-widest text-sm">
+          Load More <i class="fas fa-chevron-down ml-2"></i>
         </button>
       </div>
     </div>
   </section>
 
-  <footer class="border-t border-zinc-800 py-12 text-center text-zinc-500 text-sm">
-    <p>THE BUTCHERY © 2026 — All rights reserved.</p>
-    <p class="mt-2">Raw techno only.</p>
+  <!-- VIDEO / STREAM -->
+  <section id="video" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
+    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">LIVE & VIDEO</h2>
+    
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Main video -->
+      <div class="lg:col-span-2">
+        <div class="aspect-video bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center relative overflow-hidden">
+          <!-- Placeholder - sostituisci con embed YouTube/Twitch -->
+          <div class="text-center">
+            <i class="fas fa-video text-6xl text-zinc-700 mb-4"></i>
+            <p class="text-zinc-500 uppercase tracking-wider text-sm">Prossimo stream</p>
+            <p class="text-2xl font-bold mt-2 text-pink-500">COMING SOON</p>
+          </div>
+          
+          <!-- Live badge (mostra quando sei live) -->
+          <!-- <div class="absolute top-4 left-4 flex items-center bg-red-600 px-3 py-1 rounded text-sm">
+            <span class="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
+            LIVE
+          </div> -->
+        </div>
+      </div>
+      
+      <!-- Video thumbnails -->
+      <div class="set-card p-4 rounded-lg cursor-pointer">
+        <div class="aspect-video bg-zinc-900 rounded mb-3 flex items-center justify-center">
+          <i class="fab fa-youtube text-4xl text-red-600"></i>
+        </div>
+        <h3 class="font-bold">Warehouse Session #01</h3>
+        <p class="text-zinc-500 text-sm">Full video set + visuals</p>
+      </div>
+      
+      <div class="set-card p-4 rounded-lg cursor-pointer">
+        <div class="aspect-video bg-zinc-900 rounded mb-3 flex items-center justify-center">
+          <i class="fab fa-twitch text-4xl text-purple-500"></i>
+        </div>
+        <h3 class="font-bold">Twitch Channel</h3>
+        <p class="text-zinc-500 text-sm">Live ogni venerdì</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="bg-zinc-950/50 py-16 md:py-24">
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="section-title text-2xl md:text-3xl font-bold mb-8">ABOUT THE BUTCHERY</h2>
+          <div class="space-y-4 text-zinc-400 leading-relaxed">
+            <p>
+              <span class="text-pink-500 font-bold">THE BUTCHERY</span> è uno studio di streaming e registrazione dedicato ai suoni più crudi e viscerali della scena hard techno.
+            </p>
+            <p>
+              Ogni set è un'esperienza audiovisiva che fonde beat martellanti con visual horror ispirati al cinema di genere, creando un'atmosfera unica e immersiva.
+            </p>
+            <p>
+              Trasmettiamo live ogni settimana, portando il rave direttamente a casa tua.
+            </p>
+          </div>
+          
+          <div class="mt-8 flex flex-wrap gap-4">
+            <div class="text-center">
+              <div class="text-3xl font-bold text-pink-500">50+</div>
+              <div class="text-zinc-500 text-sm uppercase tracking-wider">Sets</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-pink-500">10K+</div>
+              <div class="text-zinc-500 text-sm uppercase tracking-wider">Plays</div>
+            </div>
+            <div class="text-center">
+              <div class="text-3xl font-bold text-pink-500">2K+</div>
+              <div class="text-zinc-500 text-sm uppercase tracking-wider">Followers</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <div class="aspect-square bg-zinc-900 rounded-lg border border-zinc-800 flex items-center justify-center">
+            <!-- Placeholder per foto/logo -->
+            <i class="fas fa-skull-crossbones text-8xl text-zinc-800"></i>
+          </div>
+          <div class="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-pink-600 rounded-lg"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BOOKING -->
+  <section id="booking" class="max-w-6xl mx-auto px-4 md:px-6 py-16 md:py-24">
+    <h2 class="section-title text-2xl md:text-3xl font-bold mb-10">BOOKING & CONTACT</h2>
+    
+    <div class="grid md:grid-cols-2 gap-12">
+      <div>
+        <p class="text-zinc-400 mb-6">
+          Disponibili per live streaming, registrazioni in studio, collaborazioni e eventi. Compila il form o scrivici direttamente.
+        </p>
+        
+        <div class="space-y-4">
+          <a href="mailto:booking@thebutchery.com" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
+            <i class="fas fa-envelope w-8 text-pink-600"></i>
+            booking@thebutchery.com
+          </a>
+          <a href="#" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
+            <i class="fab fa-instagram w-8 text-pink-600"></i>
+            @thebutchery
+          </a>
+          <a href="#" class="flex items-center text-zinc-300 hover:text-pink-500 transition-colors">
+            <i class="fab fa-telegram w-8 text-pink-600"></i>
+            @thebutchery_booking
+          </a>
+        </div>
+      </div>
+      
+      <form class="space-y-4" action="#" method="POST">
+        <input 
+          type="text" 
+          name="name"
+          placeholder="Nome" 
+          required
+          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500">
+        <input 
+          type="email" 
+          name="email"
+          placeholder="Email" 
+          required
+          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500">
+        <select 
+          name="type"
+          class="w-full px-4 py-3 rounded text-zinc-400 bg-[#0a0a0a] border border-zinc-800">
+          <option value="">Tipo di richiesta</option>
+          <option value="booking">Booking live</option>
+          <option value="collab">Collaborazione</option>
+          <option value="studio">Session in studio</option>
+          <option value="other">Altro</option>
+        </select>
+        <textarea 
+          name="message"
+          placeholder="Messaggio" 
+          rows="4"
+          required
+          class="w-full px-4 py-3 rounded text-white placeholder-zinc-500 resize-none"></textarea>
+        <button 
+          type="submit"
+          class="w-full py-4 bg-pink-600 hover:bg-pink-700 transition text-white uppercase tracking-widest font-bold rounded">
+          <i class="fas fa-paper-plane mr-2"></i> Invia
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-zinc-800/50 py-12">
+    <div class="max-w-6xl mx-auto px-4 md:px-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="text-center md:text-left">
+          <p class="text-xl font-bold tracking-[0.3em] flicker">THE BUTCHERY</p>
+          <p class="text-zinc-500 text-sm mt-1">Raw techno. No compromise.</p>
+        </div>
+        
+        <div class="flex space-x-6 text-xl text-zinc-600">
+          <a href="#" aria-label="SoundCloud" class="hover:text-orange-500 transition-colors"><i class="fab fa-soundcloud"></i></a>
+          <a href="#" aria-label="YouTube" class="hover:text-red-500 transition-colors"><i class="fab fa-youtube"></i></a>
+          <a href="#" aria-label="Twitch" class="hover:text-purple-500 transition-colors"><i class="fab fa-twitch"></i></a>
+          <a href="#" aria-label="Instagram" class="hover:text-pink-500 transition-colors"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+      
+      <div class="mt-8 pt-8 border-t border-zinc-800/50 text-center text-zinc-600 text-sm">
+        <p>© 2026 THE BUTCHERY — All rights reserved.</p>
+      </div>
+    </div>
   </footer>
+
+  <!-- JavaScript per menu mobile -->
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const closeMenu = document.getElementById('closeMenu');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const menuLinks = document.querySelectorAll('.menu-link');
+    
+    menuBtn.addEventListener('click', () => {
+      mobileMenu.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeMenu.addEventListener('click', () => {
+      mobileMenu.classList.remove('active');
+      document.body.style.overflow = '';
+    });
+    
+    menuLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+    });
+  </script>
 
 </body>
 </html>
