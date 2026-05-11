@@ -1,1021 +1,716 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE BUTCHERY — Hard Techno & Horror</title>
-  <meta name="description" content="Hard techno djset con visual horror. Streaming live e registrazioni. Raw. Unfiltered.">
-  <meta property="og:title" content="THE BUTCHERY — Hard Techno & Horror">
-  <meta property="og:description" content="Hard Techno. Horror Visuals. Raw. Unfiltered.">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#000000">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Nosifer&family=UnifrakturMaguntia&family=Share+Tech+Mono&family=Creepster&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-
-  <style>
-    :root {
-      --blood:    #9b0000;
-      --blood-bright: #cc0000;
-      --blood-drip: #7a0000;
-      --white:    #f0ebe8;
-      --off-white:#c8bfba;
-      --bg:       #000000;
-      --bg2:      #080404;
-      --surface:  #0f0606;
-      --border:   #1e0a0a;
-      --border2:  #2e1010;
-      --muted:    #5a4040;
-      --chain:    #2a2020;
-      --chain-hi: #3d2f2f;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--off-white);
-      font-family: 'Share Tech Mono', monospace;
-      overflow-x: hidden;
-      cursor: crosshair;
-    }
-
-    /* ── CUSTOM CURSOR ── */
-    a, button { cursor: crosshair; }
-
-    /* ── SCANLINES ── */
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: repeating-linear-gradient(
-        to bottom,
-        transparent 0, transparent 3px,
-        rgba(0,0,0,0.07) 3px, rgba(0,0,0,0.07) 4px
-      );
-      pointer-events: none;
-      z-index: 9999;
-    }
-
-    /* ── GLOBAL NOISE ── */
-    .noise {
-      position: fixed;
-      inset: 0;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 9998;
-    }
-
-    /* ════════════════════════
-       BLOOD DRIPS — top only
-    ════════════════════════ */
-    .drips-container {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 0;
-      z-index: 200;
-      pointer-events: none;
-    }
-
-    .drip {
-      position: absolute;
-      top: 0;
-      width: 4px;
-      border-radius: 0 0 50% 50%;
-      background: linear-gradient(to bottom, #6b0000 0%, #9b0000 60%, #5a0000 100%);
-      animation: dripDown var(--dur, 6s) ease-in var(--delay, 0s) infinite;
-      opacity: 0;
-    }
-
-    .drip::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 10px;
-      height: 8px;
-      border-radius: 50%;
-      background: #7a0000;
-    }
-
-    @keyframes dripDown {
-      0%   { height: 0;    opacity: 0; }
-      10%  { opacity: 1; }
-      70%  { height: var(--len, 120px); opacity: 0.85; }
-      85%  { height: var(--len, 120px); opacity: 0.4; }
-      100% { height: 0;    opacity: 0; }
-    }
-
-    /* ════════════════════════
-       CHAIN SVG DECORATIONS
-    ════════════════════════ */
-    .chain-h {
-      display: block;
-      width: 100%;
-      height: 20px;
-      overflow: visible;
-    }
-
-    .chain-v-left, .chain-v-right {
-      position: absolute;
-      top: 0;
-      width: 24px;
-      pointer-events: none;
-      opacity: 0.35;
-    }
-
-    .chain-v-left  { left: -12px; }
-    .chain-v-right { right: -12px; }
-
-    /* ════════════════════════
-       NAV
-    ════════════════════════ */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 600;
-      background: rgba(0,0,0,0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 2px solid var(--blood-drip);
-    }
-
-    /* chain top border on nav */
-    nav::before {
-      content: '';
-      display: block;
-      width: 100%;
-      height: 3px;
-      background: repeating-linear-gradient(
-        to right,
-        var(--chain) 0px, var(--chain) 14px,
-        var(--chain-hi) 14px, var(--chain-hi) 18px,
-        var(--chain) 18px, var(--chain) 32px,
-        transparent 32px, transparent 34px
-      );
-    }
-
-    .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 1.25rem;
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .nav-logo {
-      font-family: 'UnifrakturMaguntia', serif;
-      font-size: 1.6rem;
-      color: var(--white);
-      text-decoration: none;
-      letter-spacing: 0.02em;
-      text-shadow: 0 0 20px rgba(155,0,0,0.6);
-      transition: text-shadow 0.3s;
-    }
-
-    .nav-logo:hover {
-      text-shadow: 0 0 30px rgba(200,0,0,0.9), 0 0 60px rgba(155,0,0,0.4);
-    }
-
-    .nav-links {
-      display: flex; gap: 2.2rem; list-style: none;
-    }
-
-    .nav-links a {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-      position: relative;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px; left: 0; right: 0;
-      height: 1px;
-      background: var(--blood-bright);
-      transform: scaleX(0);
-      transition: transform 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--white); }
-    .nav-links a:hover::after { transform: scaleX(1); }
-
-    .hamburger {
-      display: none;
-      background: none; border: none;
-      color: var(--off-white);
-      font-size: 1.4rem;
-      padding: 0.5rem;
-    }
-
-    /* ════════════════════════
-       MOBILE MENU
-    ════════════════════════ */
-    .mobile-nav {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 550;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2.5rem;
-      transform: translateX(100%);
-      transition: transform 0.4s cubic-bezier(0.77,0,0.18,1);
-    }
-
-    .mobile-nav.open { transform: translateX(0); }
-
-    .mobile-nav::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse at center, rgba(80,0,0,0.2) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .mobile-nav a {
-      font-family: 'UnifrakturMaguntia', serif;
-      font-size: 2.8rem;
-      color: var(--white);
-      text-decoration: none;
-      transition: color 0.2s, text-shadow 0.2s;
-      position: relative; z-index: 1;
-    }
-
-    .mobile-nav a:hover {
-      color: var(--blood-bright);
-      text-shadow: 0 0 20px rgba(204,0,0,0.6);
-    }
-
-    .mobile-close {
-      position: absolute;
-      top: 1.2rem; right: 1.2rem;
-      background: none; border: none;
-      color: var(--muted); font-size: 1.5rem;
-    }
-
-    /* ════════════════════════
-       HERO
-    ════════════════════════ */
-    .hero {
-      min-height: 100svh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 6rem 1.25rem 4rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Blood pool at bottom */
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 180px;
-      background: radial-gradient(ellipse 80% 100% at 50% 100%, rgba(80,0,0,0.35) 0%, transparent 100%);
-      pointer-events: none;
-    }
-
-    /* vignette sides */
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 120% 60% at 50% 0%, rgba(60,0,0,0.3) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 100% at 0% 50%, rgba(0,0,0,0.7) 0%, transparent 50%),
-        radial-gradient(ellipse 40% 100% at 100% 50%, rgba(0,0,0,0.7) 0%, transparent 50%);
-      pointer-events: none;
-    }
-
-    /* Barbed wire top decoration */
-    .barbed-top {
-      position: absolute;
-      top: 60px; left: 0; right: 0;
-      height: 12px;
-      opacity: 0.3;
-      background: repeating-linear-gradient(
-        to right,
-        transparent 0, transparent 20px,
-        var(--chain-hi) 20px, var(--chain-hi) 22px,
-        transparent 22px, transparent 40px
-      );
-    }
-
-    .hero-eyebrow {
-      font-size: 0.6rem;
-      letter-spacing: 0.5em;
-      text-transform: uppercase;
-      color: var(--blood-bright);
-      margin-bottom: 1.5rem;
-      position: relative; z-index: 1;
-    }
-
-    /* ── BIG TITLE ── */
-    .hero-title {
-      font-family: 'UnifrakturMaguntia', serif;
-      font-size: clamp(3.8rem, 17vw, 11rem);
-      line-height: 0.85;
-      color: var(--white);
-      position: relative;
-      z-index: 1;
-      text-shadow:
-        2px 2px 0 #000,
-        0 0 40px rgba(155,0,0,0.5),
-        0 0 80px rgba(100,0,0,0.3);
-      animation: titleBreath 6s ease-in-out infinite;
-    }
-
-    @keyframes titleBreath {
-      0%, 100% { text-shadow: 2px 2px 0 #000, 0 0 40px rgba(155,0,0,0.5), 0 0 80px rgba(100,0,0,0.3); }
-      50%       { text-shadow: 2px 2px 0 #000, 0 0 60px rgba(180,0,0,0.7), 0 0 120px rgba(130,0,0,0.4); }
-    }
-
-    .hero-title .blood-word {
-      display: block;
-      color: var(--blood-bright);
-      -webkit-text-stroke: 1px #6b0000;
-      text-shadow:
-        3px 3px 0 #000,
-        0 0 30px rgba(204,0,0,0.8),
-        0 0 60px rgba(155,0,0,0.5);
-      animation: bloodFlicker 7s infinite;
-    }
-
-    @keyframes bloodFlicker {
-      0%,89%,91%,93%,100% { opacity: 1; }
-      90% { opacity: 0.1; }
-      92% { opacity: 0.7; }
-    }
-
-    /* ── CHAIN BELOW TITLE ── */
-    .chain-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin: 1.5rem auto;
-      opacity: 0.5;
-      position: relative; z-index: 1;
-    }
-
-    .chain-link {
-      display: inline-block;
-      width: 18px; height: 11px;
-      border: 2px solid var(--chain-hi);
-      border-radius: 50%;
-    }
-
-    .chain-link:nth-child(even) {
-      transform: rotate(90deg);
-    }
-
-    .hero-sub {
-      font-size: 0.65rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--muted);
-      position: relative; z-index: 1;
-    }
-
-    .hero-sub .sep { color: var(--blood-bright); margin: 0 0.3em; }
-
-    .hero-ctas {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-top: 2.5rem;
-      position: relative; z-index: 1;
-    }
-
-    /* ── BUTTONS ── */
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 1rem 2rem;
-      background: var(--blood);
-      color: var(--white);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      border: none;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.2s;
-    }
-
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
-    }
-
-    .btn-primary:hover { background: var(--blood-bright); }
-
-    .btn-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 1rem 2rem;
-      background: transparent;
-      border: 1px solid var(--border2);
-      color: var(--muted);
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-decoration: none;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-outline:hover { border-color: var(--blood-bright); color: var(--blood-bright); }
-
-    /* live dot */
-    .live-indicator {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--blood-bright);
-      animation: pulse 1.4s infinite;
-      flex-shrink: 0;
-    }
-
-    @keyframes pulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(204,0,0,0.7); }
-      50%      { box-shadow: 0 0 0 6px transparent; }
-    }
-
-    /* socials */
-    .hero-socials {
-      display: flex;
-      gap: 1.75rem;
-      margin-top: 3rem;
-      font-size: 1.3rem;
-      position: relative; z-index: 1;
-    }
-
-    .hero-socials a {
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s, text-shadow 0.2s;
-    }
-
-    .hero-socials a:hover {
-      color: var(--white);
-      text-shadow: 0 0 12px rgba(200,0,0,0.6);
-    }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 1.5rem; left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.55rem;
-      letter-spacing: 0.4em;
-      color: var(--muted);
-      text-transform: uppercase;
-      animation: bounce 2.5s ease-in-out infinite;
-      z-index: 1;
-    }
-
-    @keyframes bounce {
-      0%,100% { transform: translateX(-50%) translateY(0); }
-      50%      { transform: translateX(-50%) translateY(7px); }
-    }
-
-    /* ════════════════════════
-       SECTION SHELL
-    ════════════════════════ */
-    section { padding: 5rem 1.25rem; }
-    .dark-section { background: var(--bg2); }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    /* ── section header ── */
-    .s-label {
-      font-size: 0.6rem;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: var(--blood-bright);
-      margin-bottom: 0.5rem;
-    }
-
-    .s-title {
-      font-family: 'UnifrakturMaguntia', serif;
-      font-size: clamp(2rem, 7vw, 3.5rem);
-      color: var(--white);
-      line-height: 1;
-      text-shadow: 0 0 20px rgba(100,0,0,0.4);
-    }
-
-    .s-divider {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      margin: 1.25rem 0 2.5rem;
-    }
-
-    .s-divider-line {
-      height: 1px;
-      width: 50px;
-      background: var(--blood);
-    }
-
-    .s-divider-chain {
-      display: flex; gap: 3px;
-    }
-
-    .s-chain-link {
-      display: inline-block;
-      width: 12px; height: 8px;
-      border: 1.5px solid var(--chain-hi);
-      border-radius: 50%;
-      opacity: 0.6;
-    }
-
-    .s-chain-link:nth-child(2n) { transform: rotate(90deg); }
-
-    /* ════════════════════════
-       LATEST SET
-    ════════════════════════ */
-    .latest-frame {
-      background: var(--surface);
-      border: 1px solid var(--border2);
-      padding: 1.75rem;
-      position: relative;
-    }
-
-    /* corner blood drops */
-    .latest-frame::before {
-      content: '✦';
-      position: absolute;
-      top: -8px; left: 12px;
-      color: var(--blood);
-      font-size: 1rem;
-      background: var(--bg);
-      padding: 0 4px;
-    }
-
-    .latest-frame iframe { display: block; width: 100%; }
-
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-top: 1.25rem;
-    }
-
-    .tag {
-      font-size: 0.6rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      padding: 0.3rem 0.8rem;
-      border: 1px solid var(--border2);
-      color: var(--muted);
-    }
-
-    .tag.accent {
-      border-color: var(--blood-drip);
-      color: var(--blood-bright);
-    }
-
-    /* ════════════════════════
-       SETS GRID
-    ════════════════════════ */
-    .sets-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1px;
-      background: var(--border);
-    }
-
-    .set-card {
-      background: var(--surface);
-      padding: 1.5rem;
-      position: relative;
-      overflow: hidden;
-      transition: background 0.3s;
-    }
-
-    .set-card:hover { background: #130505; }
-
-    /* left blood stripe on hover */
-    .set-card::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(to bottom, var(--blood-bright), var(--blood-drip));
-      transform: scaleY(0);
-      transform-origin: top;
-      transition: transform 0.35s ease;
-    }
-
-    .set-card:hover::before { transform: scaleY(1); }
-
-    /* drip from top on hover */
-    .set-card::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 1.5rem;
-      width: 2px;
-      height: 0;
-      background: linear-gradient(to bottom, var(--blood), transparent);
-      transition: height 0.4s ease;
-      border-radius: 0 0 2px 2px;
-    }
-
-    .set-card:hover::after { height: 30px; }
-
-    .card-thumb {
-      aspect-ratio: 16/9;
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card-thumb i {
-      font-size: 2.8rem;
-      color: #1a0505;
-      transition: color 0.3s, text-shadow 0.3s;
-    }
-
-    .set-card:hover .card-thumb i {
-      color: var(--blood-drip);
-      text-shadow: 0 0 20px rgba(155,0,0,0.6);
-    }
-
-    /* blood drip inside thumb on hover */
-    .card-thumb::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 50%;
-      width: 3px; height: 0;
-      background: linear-gradient(to bottom, rgba(155,0,0,0.8), transparent);
-      transform: translateX(-50%);
-      transition: height 0.5s 0.1s;
-      border-radius: 0 0 50% 50%;
-    }
-
-    .set-card:hover .card-thumb::before { height: 40%; }
-
-    .card-duration {
-      position: absolute;
-      bottom: 0.5rem; right: 0.5rem;
-      font-size: 0.58rem;
-      background: rgba(0,0,0,0.85);
-      padding: 0.2rem 0.5rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      border-left: 1px solid var(--blood-drip);
-    }
-
-    .card-date {
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      color: var(--blood-bright);
-      text-transform: uppercase;
-    }
-
-    .card-title {
-      font-family: 'Nosifer', cursive;
-      font-size: 1rem;
-      color: var(--white);
-      margin: 0.4rem 0 0.25rem;
-      line-height: 1.2;
-      letter-spacing: 0.04em;
-    }
-
-    .card-genre {
-      font-size: 0.62rem;
-      color: var(--muted);
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .card-play {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      background: none; border: none;
-      margin-top: 1rem;
-      font-family: 'Share Tech Mono', monospace;
-      transition: color 0.2s;
-    }
-
-    .card-play:hover { color: var(--blood-bright); }
-
-    .load-more-wrap { text-align: center; margin-top: 2rem; }
-
-    /* ════════════════════════
-       VIDEO / STREAM
-    ════════════════════════ */
-    .video-shell {
-      border: 1px solid var(--border2);
-      background: var(--surface);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .video-main-area {
-      aspect-ratio: 16/9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .video-placeholder {
-      text-align: center;
-    }
-
-    .video-placeholder i {
-      display: block;
-      font-size: 3.5rem;
-      color: #1a0505;
-      margin-bottom: 1rem;
-    }
-
-    .video-placeholder p {
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      color: var(--muted);
-      text-transform: uppercase;
-    }
-
-    .video-placeholder .coming {
-      font-family: 'Nosifer', cursive;
-      font-size: 1.6rem;
-      color: var(--blood-bright);
-      margin-top: 0.5rem;
-      letter-spacing: 0.1em;
-      text-shadow: 0 0 20px rgba(204,0,0,0.5);
-    }
-
-    .live-badge-overlay {
-      position: absolute;
-      top: 1rem; left: 1rem;
-      display: none; /* remove display:none when live */
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--blood);
-      padding: 0.35rem 0.8rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-    }
-
-    .live-badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--white);
-      animation: pulse 1.2s infinite;
-    }
-
-    .platform-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      border-top: 1px solid var(--border);
-    }
-
-    .platform-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 1.5rem;
-      background: var(--surface);
-      text-decoration: none;
-      color: inherit;
-      transition: background 0.25s;
-    }
-
-    .platform-card:hover { background: #130505; }
-
-    .platform-icon {
-      width: 52px; height: 52px;
-      border: 1px solid var(--border2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-      background: var(--bg2);
-      position: relative;
-    }
-
-    /* drip from platform icon */
-    .platform-icon::after {
-      content: '';
-      position: absolute;
-      bottom: -8px; left: 50%;
-      transform: translateX(-50%);
-      width: 2px; height: 0;
-      background: linear-gradient(to bottom, var(--blood), transparent);
-      transition: height 0.3s;
-      border-radius: 0 0 2px 2px;
-    }
-
-    .platform-card:hover .platform-icon::after { height: 8px; }
-
-    .platform-title {
-      font-family: 'Nosifer', cursive;
-      font-size: 0.85rem;
-      color: var(--white);
-      letter-spacing: 0.04em;
-    }
-
-    .platform-sub {
-      font-size: 0.6rem;
-      color: var(--muted);
-      margin-top: 0.3rem;
-      letter-spacing: 0.1em;
-    }
-
-    /* ════════════════════════
-       ABOUT
-    ════════════════════════ */
-    .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: center;
-    }
-
-    .about-text p {
-      color: var(--muted);
-      line-height: 1.85;
-      font-size: 0.85rem;
-      margin-bottom: 1.1rem;
-    }
-
-    .about-text p strong { color: var(--blood-bright); font-style: italic; }
-
-    .stats {
-      display: flex;
-      gap: 2.5rem;
-      margin-top: 2.5rem;
-      flex-wrap: wrap;
-    }
-
-    .stat-num {
-      font-family: 'Nosifer', cursive;
-      font-size: 2rem;
-      color: var(--blood-bright);
-      line-height: 1;
-      text-shadow: 0 0 15px rgba(204,0,0,0.4);
-    }
-
-    .stat-label {
-      font-size: 0.58rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 0.3rem;
-    }
-
-    /* ── gothic frame / visual box ── */
-    .about-visual { position: relative; }
-
-    .gothic-frame {
-      border: 1px solid var(--border2);
-      background: var(--surface);
-      aspect-ratio: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .gothic-frame::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at center, rgba(80,0,0,0.2) 0%, transparent 70%);
-    }
-
-    .gothic-frame i {
-      font-size: 6rem;
-      color: #1c0404;
-      position: relative; z-index: 1;
-      text-shadow: 0 0 30px rgba(80,0,0,0.3);
-      animation: iconBreath 5s ease-in-out infinite;
-    }
-
-    @keyframes iconBreath {
-      0%,100% { opacity: 0.5; transform: scale(1); }
-      50%      { opacity: 0.8; transform: scale(1.03); }
-    }
-
-    /* corner ornaments */
-    .gothic-frame::after {
-      content: '✦ ✦ ✦';
-      position: absolute;
-      bottom: 0.75rem; left: 0; right: 0;
-      text-align: center;
-      color: var(--blood-drip);
-      font-size: 0.7rem;
-      letter-spacing: 0.4em;
-      opacity: 0.5;
-    }
-
-    /* chains hanging from frame */
-    .frame-chains {
-      position: absolute;
-      top: 0; left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 40px;
-    }
-
-    .f-chain {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 2px;
-    }
-
-    .f-chain-link {
-      width: 8px; height: 12px;
-      border: 1.5px solid var(--chain-hi);
-      border-radius: 50%;
-      opacity: 0.4;
-    }
-
-    .f-chain-link:nth-child(2n) { transform: rotate(90deg); }
-
-    .frame-accent {
-      position: absolute;
-      bottom: -10px; right: -10px;
-      width: 70px; height: 70px;
-      border: 1px solid var(--blood-drip);
-      opacity: 0.4;
-    }
-
-    /* ════════════════════════
-       BOOKING
-    ════════════════════════ */
-    .booking-grid {
-      display: grid;
-      grid-template-columns: 1fr 1.6fr;
-      gap: 4rem;
-      align-items: start;
-    }
-
-    .contact-info p {
-      font-size: 0.8rem;
-      color: var(--muted);
-      line-height: 1.75;
-      margin-bottom: 1.75rem;
-    }
-
-    .contact-links { display: flex; flex-direction: column; gap: 0.9rem; }
-
-    .contact-links a {
-      display: flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-size: 0.75rem;
-      color: var(--off-white);
-      text-decoration: none;
-      transition: color 0.2s;
-      letter-spacing: 0.05em;
-    }
-
-    .contact-links a i {
-      width: 1.2rem; color: var(--blood-bright);
-    }
-
-    .contact-links a:hover { color: var(--blood-bright); }
-
-    .form-field {
-      width: 100%;
-      background
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE BUTCHERY — Hard Techno Horror Milano</title>
+<meta name="description" content="Hard Techno. Horror Visuals. Streaming live e djset. Milano. Raw. Unfiltered.">
+<meta name="theme-color" content="#000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=UnifrakturMaguntia&family=Nosifer&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --r:#9b0000;--rh:#cc0000;--rd:#5a0000;--rb:#3a0000;
+  --w:#f0ebe6;--ow:#b0a5a0;
+  --bg:#000;--bg2:#060101;--sf:#0b0303;--sf2:#110505;
+  --bo:#1a0606;--bo2:#280e0e;--bo3:#3d1515;
+  --ch:#1e1818;--ch2:#2e2020;--ch3:#4a3030;
+  --mu:#523838;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ow);font-family:'Share Tech Mono',monospace;overflow-x:hidden;cursor:crosshair}
+a,button{cursor:crosshair}
+img{display:block;max-width:100%}
+
+/* ── SCANLINES ── */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0,transparent 3px,rgba(0,0,0,.055) 3px,rgba(0,0,0,.055) 4px);pointer-events:none;z-index:9999}
+
+/* ── NOISE ── */
+#noise{position:fixed;inset:0;opacity:.028;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:9998}
+
+/* ══════════════════════════════
+   BLOOD DRIPS
+══════════════════════════════ */
+#drips{position:fixed;top:0;left:0;right:0;pointer-events:none;z-index:400}
+.drip{position:absolute;top:0;border-radius:0 0 45% 45%;background:linear-gradient(to bottom,#6b0000 0%,#9b0000 50%,#3a0000 100%);animation:dripFall var(--d) ease-in var(--dl) infinite;opacity:0}
+.drip::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:160%;height:9px;border-radius:50%;background:#7a0000}
+@keyframes dripFall{
+  0%{height:0;opacity:0}
+  6%{opacity:.95}
+  60%{height:var(--l);opacity:.82}
+  82%{height:var(--l);opacity:.25}
+  100%{height:0;opacity:0}
+}
+
+/* ══════════════════════════════
+   NAV
+══════════════════════════════ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:600;background:rgba(0,0,0,.97);backdrop-filter:blur(14px)}
+.nav-chain{height:4px;background:repeating-linear-gradient(to right,var(--ch) 0,var(--ch) 11px,var(--ch3) 11px,var(--ch3) 15px,var(--ch) 15px,var(--ch) 26px,transparent 26px,transparent 28px);opacity:.7}
+.nav-border{height:1px;background:linear-gradient(to right,transparent,var(--rd),var(--rh),var(--rd),transparent)}
+.nav-inner{max-width:1160px;margin:0 auto;padding:0 1.5rem;height:58px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'UnifrakturMaguntia',serif;font-size:1.7rem;color:var(--w);text-decoration:none;letter-spacing:.02em;text-shadow:0 0 22px rgba(155,0,0,.6),0 0 50px rgba(100,0,0,.25);transition:text-shadow .3s;line-height:1}
+.nav-logo:hover{text-shadow:0 0 30px rgba(204,0,0,.9),0 0 70px rgba(155,0,0,.4),0 0 120px rgba(100,0,0,.2)}
+.nav-links{display:flex;gap:2.5rem;list-style:none}
+.nav-links a{font-size:.62rem;letter-spacing:.3em;text-transform:uppercase;color:var(--mu);text-decoration:none;transition:color .2s;position:relative;padding-bottom:2px}
+.nav-links a::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--rh);transform:scaleX(0);transition:transform .25s}
+.nav-links a:hover{color:var(--w)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.hamburger{display:none;background:none;border:none;color:var(--ow);font-size:1.35rem;padding:.5rem}
+
+/* ── MOBILE MENU ── */
+#mnav{position:fixed;inset:0;background:#000;z-index:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.8rem;transform:translateX(100%);transition:transform .4s cubic-bezier(.77,0,.18,1)}
+#mnav.open{transform:translateX(0)}
+#mnav::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(65,0,0,.25) 0%,transparent 70%);pointer-events:none}
+#mnav a{font-family:'UnifrakturMaguntia',serif;font-size:2.9rem;color:var(--w);text-decoration:none;position:relative;z-index:1;transition:color .2s,text-shadow .2s}
+#mnav a:hover{color:var(--rh);text-shadow:0 0 28px rgba(204,0,0,.65)}
+.mob-x{position:absolute;top:1.2rem;right:1.3rem;background:none;border:none;color:var(--mu);font-size:1.5rem}
+
+/* ══════════════════════════════
+   HERO
+══════════════════════════════ */
+.hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:7rem 1.5rem 4rem;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 120% 60% at 50% 0%,rgba(55,0,0,.5) 0%,transparent 60%),radial-gradient(ellipse 40% 100% at 0% 50%,rgba(0,0,0,.8) 0%,transparent 50%),radial-gradient(ellipse 40% 100% at 100% 50%,rgba(0,0,0,.8) 0%,transparent 50%),radial-gradient(ellipse 90% 55% at 50% 100%,rgba(75,0,0,.45) 0%,transparent 65%);pointer-events:none}
+
+/* barbed wire */
+.barbed{position:absolute;top:62px;left:0;right:0;height:12px;background:repeating-linear-gradient(to right,transparent 0,transparent 14px,var(--ch3) 14px,var(--ch3) 16px,transparent 16px,transparent 28px);opacity:.22;pointer-events:none}
+
+/* side chains */
+.side-chain{position:absolute;top:65px;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.2;pointer-events:none}
+.side-chain.l{left:2.5rem}.side-chain.r{right:2.5rem}
+
+/* SVG chain link */
+.scl{display:block;width:12px;height:18px;border:2px solid var(--ch3);border-radius:50%}
+.scl:nth-child(2n){transform:rotate(90deg)}
+
+/* ── HERO EYEBROW ── */
+.hero-eye{font-size:.58rem;letter-spacing:.6em;text-transform:uppercase;color:var(--rh);margin-bottom:1.5rem;position:relative;z-index:1;opacity:.8}
+
+/* ── MAIN TITLE ── */
+.hero-title{font-family:'UnifrakturMaguntia',serif;font-size:clamp(4.2rem,19vw,13rem);line-height:.8;position:relative;z-index:1}
+.ht-the{display:block;color:var(--w);text-shadow:4px 4px 0 #000,-1px -1px 0 #1a0000,0 0 60px rgba(120,0,0,.4),0 0 120px rgba(70,0,0,.2);animation:htGlow 8s ease-in-out infinite}
+.ht-butchery{display:block;color:var(--rh);-webkit-text-stroke:2px var(--rd);text-shadow:4px 4px 0 #000,0 0 40px rgba(204,0,0,.95),0 0 90px rgba(155,0,0,.6),0 0 180px rgba(100,0,0,.3);animation:htFlicker 11s infinite}
+@keyframes htGlow{
+  0%,100%{text-shadow:4px 4px 0 #000,0 0 60px rgba(120,0,0,.4),0 0 120px rgba(70,0,0,.2)}
+  50%{text-shadow:4px 4px 0 #000,0 0 80px rgba(160,0,0,.6),0 0 160px rgba(100,0,0,.3)}
+}
+@keyframes htFlicker{
+  0%,84%,86.5%,89%,100%{opacity:1}
+  85%{opacity:.06}
+  87%{opacity:.5}
+  88%{opacity:.08}
+  88.5%{opacity:.9}
+}
+
+/* ── CHAIN + SKULL ORNAMENT ── */
+.ornament{display:flex;justify-content:center;align-items:center;gap:3px;margin:1.3rem 0;position:relative;z-index:1}
+.orn-cl{display:inline-block;width:16px;height:24px;border:2.5px solid var(--ch3);border-radius:50%;opacity:.5}
+.orn-cl:nth-child(2n){transform:rotate(90deg)}
+.orn-skull{color:var(--rd);font-size:1.1rem;margin:0 8px;opacity:.65}
+
+/* ── HERO SUB ── */
+.hero-sub{font-size:.62rem;letter-spacing:.42em;text-transform:uppercase;color:var(--mu);position:relative;z-index:1}
+.hero-sub .s{color:var(--rh);margin:0 .35em}
+
+.hero-ctas{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin-top:2.5rem;position:relative;z-index:1}
+
+/* ── BUTTONS ── */
+.btn-p{display:inline-flex;align-items:center;gap:.6rem;padding:1rem 2.3rem;background:var(--r);color:var(--w);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border:1px solid var(--rd);position:relative;overflow:hidden;transition:background .2s;animation:bpulse 3.5s infinite}
+.btn-p::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.08) 0%,transparent 55%)}
+.btn-p:hover{background:var(--rh);animation:none}
+@keyframes bpulse{0%,100%{box-shadow:0 0 0 0 rgba(155,0,0,.65)}50%{box-shadow:0 0 0 12px transparent}}
+
+.btn-o{display:inline-flex;align-items:center;gap:.6rem;padding:1rem 2.3rem;background:transparent;border:1px solid var(--bo3);color:var(--mu);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;transition:border-color .2s,color .2s}
+.btn-o:hover{border-color:var(--rh);color:var(--rh)}
+
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--rh);flex-shrink:0;animation:ldot 1.4s infinite}
+@keyframes ldot{0%,100%{box-shadow:0 0 0 0 rgba(204,0,0,.8)}50%{box-shadow:0 0 0 5px transparent}}
+
+/* socials */
+.hero-soc{display:flex;gap:2rem;margin-top:3rem;font-size:1.4rem;position:relative;z-index:1}
+.hero-soc a{color:var(--mu);text-decoration:none;transition:color .2s,text-shadow .2s}
+.hero-soc a:hover{color:var(--w);text-shadow:0 0 16px rgba(204,0,0,.7)}
+
+.scroll-hint{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);font-size:.52rem;letter-spacing:.5em;color:var(--mu);text-transform:uppercase;animation:sh 3s ease-in-out infinite;z-index:1}
+@keyframes sh{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+/* ══════════════════════════════
+   SECTION SHELL
+══════════════════════════════ */
+section{padding:5.5rem 1.5rem}
+.dbg{background:var(--bg2)}
+.wrap{max-width:1160px;margin:0 auto}
+
+.s-eye{font-size:.57rem;letter-spacing:.5em;text-transform:uppercase;color:var(--rh);margin-bottom:.35rem;opacity:.85}
+.s-tit{font-family:'UnifrakturMaguntia',serif;font-size:clamp(2.1rem,7.5vw,4rem);color:var(--w);line-height:.92;text-shadow:0 0 28px rgba(100,0,0,.38)}
+
+/* section chain divider */
+.s-div{display:flex;align-items:center;gap:4px;margin:1.3rem 0 2.8rem}
+.s-div-bar{flex:0 0 55px;height:1px;background:linear-gradient(to right,var(--r),transparent)}
+.sdl{display:inline-block;width:13px;height:8px;border:1.5px solid var(--ch3);border-radius:50%;opacity:.55}
+.sdl:nth-child(2n){transform:rotate(90deg)}
+
+/* ══════════════════════════════
+   LATEST SET
+══════════════════════════════ */
+.latest-frame{background:var(--sf);border:1px solid var(--bo2);padding:2rem;position:relative}
+.latest-frame::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,var(--rb),var(--rd),var(--r),var(--rh),var(--r),var(--rd),var(--rb))}
+.latest-frame::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,var(--rd),transparent)}
+.latest-frame iframe{display:block;width:100%}
+
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem}
+.tag{font-size:.57rem;letter-spacing:.18em;text-transform:uppercase;padding:.3rem .85rem;border:1px solid var(--bo2);color:var(--mu)}
+.tag.ac{border-color:var(--rd);color:var(--rh)}
+
+/* ══════════════════════════════
+   SETS GRID
+══════════════════════════════ */
+.sets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1px;background:var(--bo)}
+.sc{background:var(--sf);padding:1.5rem;position:relative;overflow:hidden;transition:background .3s}
+.sc:hover{background:#110202}
+
+/* left blood bar */
+.sc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--rh),var(--r),var(--rd));transform:scaleY(0);transform-origin:top;transition:transform .35s}
+.sc:hover::before{transform:scaleY(1)}
+
+/* drip from top */
+.sc::after{content:'';position:absolute;top:0;left:2rem;width:3px;height:0;background:linear-gradient(to bottom,var(--r),transparent);border-radius:0 0 3px 3px;transition:height .45s}
+.sc:hover::after{height:40px}
+
+.ct{aspect-ratio:16/9;background:var(--bg2);border:1px solid var(--bo);display:flex;align-items:center;justify-content:center;margin-bottom:1rem;position:relative;overflow:hidden}
+.ct i{font-size:3rem;color:#1c0303;transition:color .3s,text-shadow .3s}
+.sc:hover .ct i{color:var(--rd);text-shadow:0 0 28px rgba(155,0,0,.65)}
+
+/* inner drip */
+.ct::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:3px;height:0;background:linear-gradient(to bottom,rgba(155,0,0,.9),transparent);border-radius:0 0 3px 3px;transition:height .5s .1s}
+.sc:hover .ct::after{height:50%}
+
+/* corner chain ornaments on thumb */
+.ct::before{content:'⛓';position:absolute;top:5px;left:7px;font-size:.7rem;opacity:.15;transition:opacity .3s}
+.sc:hover .ct::before{opacity:.4}
+
+.cd{position:absolute;bottom:.5rem;right:.5rem;font-size:.56rem;background:rgba(0,0,0,.9);padding:.22rem .55rem;color:var(--mu);letter-spacing:.1em;border-left:2px solid var(--rd)}
+.cdate{font-size:.57rem;letter-spacing:.24em;color:var(--rh);text-transform:uppercase}
+.ctit{font-family:'Nosifer',cursive;font-size:.95rem;color:var(--w);margin:.4rem 0 .28rem;line-height:1.25}
+.cgen{font-size:.59rem;color:var(--mu);letter-spacing:.12em;text-transform:uppercase}
+.cplay{display:inline-flex;align-items:center;gap:.45rem;font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--mu);background:none;border:none;margin-top:1rem;font-family:'Share Tech Mono',monospace;transition:color .2s}
+.cplay:hover{color:var(--rh)}
+
+.lmw{text-align:center;margin-top:2rem}
+
+/* ══════════════════════════════
+   VIDEO SECTION
+══════════════════════════════ */
+.vshell{border:1px solid var(--bo2);background:var(--sf);overflow:hidden;position:relative}
+.vshell::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(to right,transparent,var(--rd),var(--rh),var(--rd),transparent);z-index:1}
+
+.vmain{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;position:relative;background:var(--bg2);overflow:hidden}
+.vmain::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(50,0,0,.15) 0%,transparent 70%)}
+
+.vplaceholder{text-align:center;position:relative;z-index:1}
+.vplaceholder i{display:block;font-size:3.8rem;color:#1c0303;margin-bottom:1.2rem}
+.vplaceholder p{font-size:.62rem;letter-spacing:.35em;color:var(--mu);text-transform:uppercase}
+.vplaceholder .vcs{font-family:'Nosifer',cursive;font-size:1.6rem;color:var(--rh);margin-top:.5rem;letter-spacing:.08em;text-shadow:0 0 25px rgba(204,0,0,.55)}
+
+.live-badge{position:absolute;top:1rem;left:1rem;display:none;align-items:center;gap:.5rem;background:var(--r);padding:.32rem .85rem;font-size:.58rem;letter-spacing:.3em;z-index:2}
+.lb-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:ldot 1.2s infinite}
+
+.prow{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bo);border-top:1px solid var(--bo)}
+.pc{display:flex;align-items:center;gap:1.1rem;padding:1.4rem 1.5rem;background:var(--sf);text-decoration:none;color:inherit;transition:background .25s;position:relative;overflow:hidden}
+.pc:hover{background:#110202}
+.pc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(to right,var(--rb),var(--rd),transparent);transform:scaleX(0);transition:transform .35s}
+.pc:hover::after{transform:scaleX(1)}
+.pi{width:56px;height:56px;border:1px solid var(--bo2);display:flex;align-items:center;justify-content:center;font-size:1.55rem;flex-shrink:0;background:var(--bg2);position:relative;transition:border-color .2s}
+.pc:hover .pi{border-color:var(--rd)}
+.pi::after{content:'';position:absolute;bottom:-9px;left:50%;transform:translateX(-50%);width:2px;height:0;background:linear-gradient(to bottom,var(--r),transparent);border-radius:0 0 2px 2px;transition:height .3s}
+.pc:hover .pi::after{height:9px}
+.pt{font-family:'Nosifer',cursive;font-size:.82rem;color:var(--w)}
+.ps{font-size:.58rem;color:var(--mu);margin-top:.3rem;letter-spacing:.1em}
+
+/* ══════════════════════════════
+   ABOUT
+══════════════════════════════ */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.at p{color:var(--mu);line-height:1.95;font-size:.86rem;margin-bottom:1.1rem}
+.at p strong{color:var(--rh)}
+.stats{display:flex;gap:2.5rem;margin-top:2.5rem;flex-wrap:wrap}
+.stn{font-family:'Nosifer',cursive;font-size:2rem;color:var(--rh);line-height:1;text-shadow:0 0 20px rgba(204,0,0,.42)}
+.stl{font-size:.57rem;letter-spacing:.28em;text-transform:uppercase;color:var(--mu);margin-top:.3rem}
+
+/* gothic portrait */
+.av{position:relative}
+.gframe{border:1px solid var(--bo2);background:var(--sf);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.gframe::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(70,0,0,.2) 0%,transparent 70%)}
+
+/* corner ornaments */
+.gframe .cor{position:absolute;width:22px;height:22px;opacity:.4}
+.gframe .cor.tl{top:8px;left:8px;border-top:2px solid var(--rh);border-left:2px solid var(--rh)}
+.gframe .cor.tr{top:8px;right:8px;border-top:2px solid var(--rh);border-right:2px solid var(--rh)}
+.gframe .cor.bl{bottom:8px;left:8px;border-bottom:2px solid var(--rh);border-left:2px solid var(--rh)}
+.gframe .cor.br{bottom:8px;right:8px;border-bottom:2px solid var(--rh);border-right:2px solid var(--rh)}
+
+.gframe > i{font-size:7.5rem;color:#1e0202;position:relative;z-index:1;text-shadow:0 0 45px rgba(80,0,0,.38);animation:gpulse 6s ease-in-out infinite}
+@keyframes gpulse{0%,100%{opacity:.42;transform:scale(1)}50%{opacity:.78;transform:scale(1.04)}}
+
+.gframe::after{content:'✦ ✦ ✦';position:absolute;bottom:.9rem;left:0;right:0;text-align:center;color:var(--rd);font-size:.72rem;letter-spacing:.55em;opacity:.5}
+
+/* chains hanging into frame */
+.fchains{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-around;padding:0 2.5rem;pointer-events:none}
+.fc{display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.3}
+.fcl{width:9px;height:13px;border:1.5px solid var(--ch3);border-radius:50%}
+.fcl:nth-child(2n){transform:rotate(90deg)}
+.facc{position:absolute;bottom:-13px;right:-13px;width:80px;height:80px;border:1px solid var(--rd);opacity:.35}
+
+/* ══════════════════════════════
+   BOOKING
+══════════════════════════════ */
+.bgrid{display:grid;grid-template-columns:1fr 1.75fr;gap:4.5rem;align-items:start}
+.ci p{font-size:.8rem;color:var(--mu);line-height:1.8;margin-bottom:1.8rem}
+.clinks{display:flex;flex-direction:column;gap:1rem}
+.clinks a{display:flex;align-items:center;gap:.9rem;font-size:.75rem;color:var(--ow);text-decoration:none;transition:color .2s;letter-spacing:.05em}
+.clinks a i{width:1.25rem;color:var(--rh);flex-shrink:0}
+.clinks a:hover{color:var(--rh)}
+
+.ff{width:100%;background:var(--sf);border:1px solid var(--bo2);color:var(--ow);font-family:'Share Tech Mono',monospace;font-size:.8rem;padding:.9rem 1rem;margin-bottom:.75rem;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:0}
+.ff::placeholder{color:var(--mu)}
+.ff:focus{border-color:var(--r);box-shadow:0 0 14px rgba(155,0,0,.22)}
+select.ff{background-color:var(--sf)}
+textarea.ff{resize:vertical;min-height:135px}
+
+.bsub{width:100%;padding:1.05rem;background:var(--r);color:var(--w);border:1px solid var(--rd);font-family:'Share Tech Mono',monospace;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;transition:background .2s;position:relative;overflow:hidden}
+.bsub::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.07) 0%,transparent 55%)}
+.bsub:hover{background:var(--rh)}
+
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
+footer{background:var(--bg);border-top:1px solid var(--rd)}
+.fchain{height:4px;background:repeating-linear-gradient(to right,var(--ch) 0,var(--ch) 11px,var(--ch3) 11px,var(--ch3) 15px,var(--ch) 15px,var(--ch) 26px,transparent 26px,transparent 28px);opacity:.6}
+.finner{max-width:1160px;margin:0 auto;padding:3rem 1.5rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;text-align:center}
+.flogo{font-family:'UnifrakturMaguntia',serif;font-size:2.2rem;color:var(--w);text-shadow:0 0 28px rgba(155,0,0,.5);letter-spacing:.03em}
+.ftag{font-size:.57rem;letter-spacing:.45em;color:var(--mu);text-transform:uppercase}
+.fsoc{display:flex;gap:1.8rem;font-size:1.2rem}
+.fsoc a{color:var(--mu);text-decoration:none;transition:color .2s,text-shadow .2s}
+.fsoc a:hover{color:var(--w);text-shadow:0 0 13px rgba(204,0,0,.65)}
+.fcopy{font-size:.56rem;color:var(--mu);letter-spacing:.12em}
+
+/* ══════════════════════════════
+   SECTION BLOOD ACCENT — inline drips between sections
+══════════════════════════════ */
+.sec-drip{width:100%;height:60px;position:relative;overflow:hidden;pointer-events:none}
+.sec-drip span{position:absolute;top:0;border-radius:0 0 50% 50%;background:linear-gradient(to bottom,var(--r),transparent);opacity:.5}
+
+/* ══════════════════════════════
+   RESPONSIVE
+══════════════════════════════ */
+@media(max-width:768px){
+  .nav-links{display:none}
+  .hamburger{display:block}
+  section{padding:3.5rem 1.25rem}
+  .about-grid{grid-template-columns:1fr;gap:2.5rem}
+  .av{display:none}
+  .bgrid{grid-template-columns:1fr;gap:2.5rem}
+  .prow{grid-template-columns:1fr}
+  .side-chain{display:none}
+  .sets-grid{grid-template-columns:1fr}
+}
+@media(max-width:440px){
+  .hero-title{font-size:clamp(3.2rem,23vw,4.8rem)}
+  .stats{gap:1.5rem}
+}
+</style>
+</head>
+<body>
+
+<div id="noise" aria-hidden="true"></div>
+
+<!-- ══ BLOOD DRIPS ══ -->
+<div id="drips" aria-hidden="true">
+  <div class="drip" style="left:6%;  width:3px;--d:7.5s;--dl:0s;   --l:140px"></div>
+  <div class="drip" style="left:14%; width:4px;--d:10s; --dl:3.2s; --l:85px"></div>
+  <div class="drip" style="left:27%; width:3px;--d:6.5s;--dl:1.1s; --l:165px"></div>
+  <div class="drip" style="left:41%; width:5px;--d:12s; --dl:4.5s; --l:70px"></div>
+  <div class="drip" style="left:52%; width:3px;--d:8s;  --dl:0.6s; --l:120px"></div>
+  <div class="drip" style="left:63%; width:4px;--d:9s;  --dl:2.8s; --l:95px"></div>
+  <div class="drip" style="left:77%; width:3px;--d:7s;  --dl:1.8s; --l:155px"></div>
+  <div class="drip" style="left:88%; width:4px;--d:11s; --dl:3.9s; --l:80px"></div>
+  <div class="drip" style="left:95%; width:3px;--d:8.5s;--dl:0.3s; --l:110px"></div>
+</div>
+
+<!-- ══ NAV ══ -->
+<header id="nav">
+  <div class="nav-chain"></div>
+  <div class="nav-border"></div>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">The Butchery</a>
+    <ul class="nav-links">
+      <li><a href="#sets">Sets</a></li>
+      <li><a href="#video">Video</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#booking">Booking</a></li>
+    </ul>
+    <button class="hamburger" id="ham" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<!-- ══ MOBILE MENU ══ -->
+<nav id="mnav" aria-hidden="true">
+  <button class="mob-x" id="mx" aria-label="Chiudi"><i class="fas fa-times"></i></button>
+  <a href="#sets"    class="ml">Sets</a>
+  <a href="#video"   class="ml">Video</a>
+  <a href="#about"   class="ml">About</a>
+  <a href="#booking" class="ml">Booking</a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="barbed" aria-hidden="true"></div>
+
+  <!-- side chain decorations -->
+  <div class="side-chain l" aria-hidden="true">
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+  </div>
+  <div class="side-chain r" aria-hidden="true">
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+    <div class="scl"></div><div class="scl"></div><div class="scl"></div><div class="scl"></div>
+  </div>
+
+  <p class="hero-eye">Milano — Est. 2025</p>
+
+  <h1 class="hero-title">
+    <span class="ht-the">The</span>
+    <span class="ht-butchery">Butchery</span>
+  </h1>
+
+  <!-- chain skull ornament -->
+  <div class="ornament" aria-hidden="true">
+    <span class="orn-cl"></span><span class="orn-cl"></span><span class="orn-cl"></span>
+    <span class="orn-cl"></span><span class="orn-cl"></span>
+    <span class="orn-skull"><i class="fas fa-skull"></i></span>
+    <span class="orn-cl"></span><span class="orn-cl"></span>
+    <span class="orn-cl"></span><span class="orn-cl"></span><span class="orn-cl"></span>
+  </div>
+
+  <p class="hero-sub">
+    Hard Techno<span class="s">///</span>Horror Visuals<span class="s">///</span>Raw
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#latest" class="btn-p"><i class="fas fa-play"></i>&nbsp;Latest Set</a>
+    <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener" class="btn-o">
+      <span class="live-dot"></span>&nbsp;Twitch Live
+    </a>
+  </div>
+
+  <div class="hero-soc">
+    <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+    <a href="https://www.twitch.tv/thebutcherymilano"    target="_blank" rel="noopener" aria-label="Twitch"><i class="fab fa-twitch"></i></a>
+    <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+  </div>
+
+  <p class="scroll-hint">↓ &nbsp;scroll&nbsp; ↓</p>
+</section>
+
+<!-- blood drip accent between hero and latest -->
+<div class="sec-drip" aria-hidden="true">
+  <span style="left:15%;width:4px;height:45px"></span>
+  <span style="left:35%;width:3px;height:30px"></span>
+  <span style="left:58%;width:5px;height:52px"></span>
+  <span style="left:78%;width:3px;height:38px"></span>
+</div>
+
+<!-- ══ LATEST SET ══ -->
+<section id="latest" class="dbg">
+  <div class="wrap">
+    <p class="s-eye">// 001</p>
+    <h2 class="s-tit">Latest Massacre</h2>
+    <div class="s-div" aria-hidden="true">
+      <div class="s-div-bar"></div>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span>
+    </div>
+    <div class="latest-frame">
+      <!-- ▶ Sostituisci URL con il tuo set SoundCloud reale -->
+      <iframe width="100%" height="166" scrolling="no" frameborder="no" loading="lazy" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/thebutcherymilano&color=%239b0000&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+      </iframe>
+      <div class="tags">
+        <span class="tag ac">Hard Techno</span>
+        <span class="tag">145 BPM</span>
+        <span class="tag">2h 30min</span>
+        <span class="tag">Live @ Studio</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- blood drip accent -->
+<div class="sec-drip" aria-hidden="true">
+  <span style="left:8%;width:3px;height:35px"></span>
+  <span style="left:42%;width:4px;height:55px"></span>
+  <span style="left:69%;width:3px;height:28px"></span>
+  <span style="left:91%;width:5px;height:48px"></span>
+</div>
+
+<!-- ══ ALL SETS ══ -->
+<section id="sets">
+  <div class="wrap">
+    <p class="s-eye">// 002</p>
+    <h2 class="s-tit">All Sets</h2>
+    <div class="s-div" aria-hidden="true">
+      <div class="s-div-bar"></div>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span>
+    </div>
+
+    <div class="sets-grid">
+      <article class="sc">
+        <div class="ct"><i class="fas fa-skull"></i><span class="cd">2:14:00</span></div>
+        <time class="cdate">01.01.2026</time>
+        <h3 class="ctit">Rave in The Abyss</h3>
+        <p class="cgen">Hard Techno / Industrial</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+      <article class="sc">
+        <div class="ct"><i class="fas fa-ghost"></i><span class="cd">1:45:00</span></div>
+        <time class="cdate">15.12.2025</time>
+        <h3 class="ctit">Midnight Slaughter</h3>
+        <p class="cgen">Schranz / Hard Techno</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+      <article class="sc">
+        <div class="ct"><i class="fas fa-spider"></i><span class="cd">3:00:00</span></div>
+        <time class="cdate">01.11.2025</time>
+        <h3 class="ctit">Halloween Massacre</h3>
+        <p class="cgen">Industrial / EBM</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+      <article class="sc">
+        <div class="ct"><i class="fas fa-eye"></i><span class="cd">2:00:00</span></div>
+        <time class="cdate">20.10.2025</time>
+        <h3 class="ctit">Flesh Protocol</h3>
+        <p class="cgen">Schranz / Acid</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+      <article class="sc">
+        <div class="ct"><i class="fas fa-biohazard"></i><span class="cd">1:58:00</span></div>
+        <time class="cdate">05.10.2025</time>
+        <h3 class="ctit">Toxic Void</h3>
+        <p class="cgen">Hard Techno / EBM</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+      <article class="sc">
+        <div class="ct"><i class="fas fa-bone"></i><span class="cd">2:30:00</span></div>
+        <time class="cdate">15.09.2025</time>
+        <h3 class="ctit">Bloodstream</h3>
+        <p class="cgen">Industrial / Hard Techno</p>
+        <button class="cplay"><i class="fas fa-play"></i>&nbsp; Play Set</button>
+      </article>
+    </div>
+
+    <div class="lmw"><button class="btn-o" style="margin-top:1.5rem">Load More &nbsp;<i class="fas fa-chevron-down"></i></button></div>
+  </div>
+</section>
+
+<!-- blood drip accent -->
+<div class="sec-drip" aria-hidden="true">
+  <span style="left:22%;width:4px;height:50px"></span>
+  <span style="left:50%;width:3px;height:32px"></span>
+  <span style="left:80%;width:4px;height:44px"></span>
+</div>
+
+<!-- ══ VIDEO / STREAM ══ -->
+<section id="video" class="dbg">
+  <div class="wrap">
+    <p class="s-eye">// 003</p>
+    <h2 class="s-tit">Live & Video</h2>
+    <div class="s-div" aria-hidden="true">
+      <div class="s-div-bar"></div>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span>
+    </div>
+    <div class="vshell">
+      <div class="vmain">
+        <!-- set display:flex when LIVE, replace placeholder with Twitch iframe -->
+        <div class="live-badge"><div class="lb-dot"></div> LIVE</div>
+        <div class="vplaceholder">
+          <i class="fas fa-video"></i>
+          <p>Prossimo stream</p>
+          <p class="vcs">Coming Soon</p>
+        </div>
+      </div>
+      <div class="prow">
+        <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener" class="pc">
+          <div class="pi"><i class="fab fa-youtube" style="color:#cc0000"></i></div>
+          <div><p class="pt">YouTube</p><p class="ps">@TheButcheryMilano — Sets & VOD</p></div>
+        </a>
+        <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener" class="pc">
+          <div class="pi"><i class="fab fa-twitch" style="color:#9146ff"></i></div>
+          <div><p class="pt">Twitch</p><p class="ps">thebutcherymilano — Live ogni venerdì</p></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- blood drip accent -->
+<div class="sec-drip" aria-hidden="true">
+  <span style="left:10%;width:3px;height:38px"></span>
+  <span style="left:35%;width:5px;height:55px"></span>
+  <span style="left:62%;width:3px;height:30px"></span>
+  <span style="left:88%;width:4px;height:46px"></span>
+</div>
+
+<!-- ══ ABOUT ══ -->
+<section id="about">
+  <div class="wrap">
+    <p class="s-eye">// 004</p>
+    <h2 class="s-tit">About The Butchery</h2>
+    <div class="s-div" aria-hidden="true">
+      <div class="s-div-bar"></div>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span>
+    </div>
+    <div class="about-grid">
+      <div class="at">
+        <p><strong>The Butchery</strong> è uno studio di streaming e registrazione dedicato ai suoni più crudi e viscerali della scena hard techno milanese.</p>
+        <p>Ogni set è un'esperienza audiovisiva che fonde beat martellanti con visual horror ispirati al cinema di genere — Saw, Hostel, il body horror più brutale. Nessuna concessione.</p>
+        <p>Trasmettiamo live ogni settimana su Twitch e YouTube. Il rave arriva direttamente a casa tua.</p>
+        <div class="stats">
+          <div><div class="stn">50+</div><div class="stl">Sets</div></div>
+          <div><div class="stn">10K+</div><div class="stl">Plays</div></div>
+          <div><div class="stn">2K+</div><div class="stl">Followers</div></div>
+        </div>
+      </div>
+      <div class="av">
+        <div class="gframe">
+          <div class="fchains" aria-hidden="true">
+            <div class="fc"><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div></div>
+            <div class="fc"><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div></div>
+            <div class="fc"><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div><div class="fcl"></div></div>
+          </div>
+          <div class="cor tl"></div><div class="cor tr"></div>
+          <div class="cor bl"></div><div class="cor br"></div>
+          <i class="fas fa-skull-crossbones"></i>
+        </div>
+        <div class="facc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- blood drip accent -->
+<div class="sec-drip" aria-hidden="true">
+  <span style="left:18%;width:4px;height:42px"></span>
+  <span style="left:48%;width:3px;height:58px"></span>
+  <span style="left:75%;width:5px;height:34px"></span>
+</div>
+
+<!-- ══ BOOKING ══ -->
+<section id="booking" class="dbg">
+  <div class="wrap">
+    <p class="s-eye">// 005</p>
+    <h2 class="s-tit">Booking & Contact</h2>
+    <div class="s-div" aria-hidden="true">
+      <div class="s-div-bar"></div>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <span class="sdl"></span><span class="sdl"></span>
+    </div>
+    <div class="bgrid">
+      <div class="ci">
+        <p>Disponibili per live streaming, registrazioni in studio, collaborazioni e eventi. Compila il form o scrivici direttamente.</p>
+        <div class="clinks">
+          <a href="mailto:booking@thebutchery.com"><i class="fas fa-envelope"></i>booking@thebutchery.com</a>
+          <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i>@thebutchery_milano</a>
+          <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener"><i class="fab fa-youtube"></i>@TheButcheryMilano</a>
+          <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener"><i class="fab fa-twitch"></i>thebutcherymilano</a>
+        </div>
+      </div>
+      <form onsubmit="fsubmit(event)">
+        <input  class="ff" type="text"  placeholder="Nome"    required autocomplete="name">
+        <input  class="ff" type="email" placeholder="Email"   required autocomplete="email">
+        <select class="ff">
+          <option value="">Tipo di richiesta</option>
+          <option>Booking live</option>
+          <option>Collaborazione</option>
+          <option>Session in studio</option>
+          <option>Altro</option>
+        </select>
+        <textarea class="ff" placeholder="Messaggio" rows="5" required></textarea>
+        <button type="submit" class="bsub"><i class="fas fa-paper-plane"></i>&nbsp;&nbsp;Invia</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="fchain"></div>
+  <div class="finner">
+    <div class="flogo">The Butchery</div>
+    <div class="ftag">Raw Techno — Horror Visuals — No Compromise — Milano</div>
+
+    <!-- footer chain ornament -->
+    <div style="display:flex;align-items:center;gap:3px;opacity:.35" aria-hidden="true">
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+      <i class="fas fa-skull" style="color:#5a0000;font-size:.7rem;margin:0 5px"></i>
+      <span class="sdl"></span><span class="sdl"></span><span class="sdl"></span>
+    </div>
+
+    <div class="fsoc">
+      <a href="https://www.youtube.com/@TheButcheryMilano"    target="_blank" rel="noopener" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.twitch.tv/thebutcherymilano"       target="_blank" rel="noopener" aria-label="Twitch"><i class="fab fa-twitch"></i></a>
+      <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p class="fcopy">© 2026 The Butchery Milano — All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+/* ── Mobile menu ── */
+const ham=document.getElementById('ham'),mn=document.getElementById('mnav'),mx=document.getElementById('mx');
+function mo(){mn.classList.add('open');mn.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function mc(){mn.classList.remove('open');mn.setAttribute('aria-hidden','true');document.body.style.overflow=''}
+ham.addEventListener('click',mo);mx.addEventListener('click',mc);
+document.querySelectorAll('.ml').forEach(l=>l.addEventListener('click',mc));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')mc()});
+
+/* ── Form ── */
+function fsubmit(e){
+  e.preventDefault();
+  const b=e.target.querySelector('.bsub');
+  b.innerHTML='<i class="fas fa-check"></i>&nbsp;&nbsp;Inviato!';
+  b.style.background='#1a5000';
+  setTimeout(()=>{
+    b.innerHTML='<i class="fas fa-paper-plane"></i>&nbsp;&nbsp;Invia';
+    b.style.background='';
+    e.target.reset();
+  },3000);
+}
+
+/* ── Parallax blood drips on scroll ── */
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  document.querySelectorAll('.sec-drip span').forEach((s,i)=>{
+    s.style.transform=`translateY(${y*(0.04+(i%3)*0.015)}px)`;
+  });
+},{passive:true});
+</script>
+</body>
+</html>
