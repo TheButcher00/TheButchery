@@ -1,0 +1,1431 @@
+bash
+
+rm -f /mnt/user-data/outputs/index.html
+cat > /home/claude/build.py << 'BUILDEOF'
+with open('/home/claude/L.txt') as f: LOGO = f.read()
+with open('/home/claude/C.txt') as f: CLEAV = f.read()
+
+PAGE = '''<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE BUTCHERY — Restricted Access</title>
+<meta name="description" content="CLASSIFIED. UNAUTHORIZED ACCESS PROHIBITED.">
+<meta name="theme-color" content="#000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Share+Tech+Mono&family=VT323&family=Nosifer&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+/* ===================================================
+   THE BUTCHERY — CINEMATIC HORROR INTERFACE
+   PS2 Horror × Industrial Brutalism × Occult Ritual
+=================================================== */
+
+:root {
+  --void:     #000000;
+  --abyss:    #030000;
+  --pit:      #080101;
+  --crypt:    #0e0202;
+  --wound:    #5a0000;
+  --blood:    #8b0000;
+  --gore:     #b00000;
+  --arterial: #cc0000;
+  --rust:     #3a1a0a;
+  --iron:     #1c1010;
+  --bone:     #c8b0a0;
+  --ash:      #6a5050;
+  --ghost:    #3a2828;
+  --amber:    #c84400;
+  --static:   #1a1212;
+}
+
+/* RESET */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: auto; overflow-x: hidden; }
+
+body {
+  background: var(--void);
+  color: var(--bone);
+  font-family: 'Share Tech Mono', monospace;
+  overflow-x: hidden;
+  cursor: none;
+}
+::selection { background: rgba(139,0,0,.5); color: #fff; }
+
+/* ============ CUSTOM CURSOR ============ */
+#cursor-ring {
+  position: fixed; width: 28px; height: 28px;
+  border: 1.5px solid rgba(180,0,0,.7);
+  border-radius: 50%; pointer-events: none;
+  z-index: 99999; transform: translate(-50%,-50%);
+  transition: width .12s, height .12s, border-color .12s, opacity .12s;
+  mix-blend-mode: normal;
+}
+#cursor-dot {
+  position: fixed; width: 5px; height: 5px;
+  background: var(--arterial); border-radius: 50%;
+  pointer-events: none; z-index: 99999;
+  transform: translate(-50%,-50%);
+  box-shadow: 0 0 8px var(--arterial);
+  transition: transform .05s;
+}
+body:hover #cursor-ring { opacity: 1; }
+.cursor-hover #cursor-ring { width: 48px; height: 48px; border-color: rgba(204,0,0,.9); }
+.cursor-click #cursor-dot  { transform: translate(-50%,-50%) scale(2.5); }
+
+/* ============ FLASHLIGHT MASK ============ */
+#flashlight {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 8200;
+  background: radial-gradient(circle 220px at var(--fx,50%) var(--fy,50%),
+    transparent 0%,
+    rgba(0,0,0,.15) 35%,
+    rgba(0,0,0,.55) 60%,
+    rgba(0,0,0,.88) 100%
+  );
+  mix-blend-mode: multiply;
+  transition: background .04s;
+}
+
+/* ============ SCANLINES ============ */
+#scanlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9990;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0, transparent 2px,
+    rgba(0,0,0,.06) 2px, rgba(0,0,0,.06) 4px
+  );
+}
+
+/* ============ GRAIN ============ */
+#grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9989;
+  opacity: .06; animation: grainShift .09s steps(1) infinite;
+}
+#grain::before {
+  content: ''; position: absolute; inset: -100%;
+  width: 300%; height: 300%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@keyframes grainShift {
+  0%{transform:translate(0,0)} 20%{transform:translate(-4%,3%)}
+  40%{transform:translate(3%,-4%)} 60%{transform:translate(-3%,2%)}
+  80%{transform:translate(4%,-2%)} 100%{transform:translate(0,0)}
+}
+
+/* ============ CHROMATIC ABERRATION ============ */
+#chroma {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9988;
+  opacity: 0; animation: chromaFlicker 18s infinite;
+}
+#chroma::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to right, rgba(255,0,0,.04) 0%, transparent 50%, rgba(0,0,255,.04) 100%);
+  mix-blend-mode: screen;
+}
+@keyframes chromaFlicker {
+  0%,100%{opacity:0} 8%{opacity:.8} 8.5%{opacity:0} 45%{opacity:0} 45.4%{opacity:.5} 45.8%{opacity:0} 72%{opacity:0} 72.2%{opacity:1} 72.6%{opacity:0}
+}
+
+/* ============ VIGNETTE ============ */
+#vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9987;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 30%, rgba(0,0,0,.85) 100%),
+              radial-gradient(ellipse 100% 40% at 50% 0%, rgba(8,0,0,.7) 0%, transparent 50%),
+              radial-gradient(ellipse 100% 40% at 50% 100%, rgba(8,0,0,.7) 0%, transparent 50%);
+}
+
+/* ============ GLITCH CANVAS ============ */
+#glitch-canvas {
+  position: fixed; inset: 0; pointer-events: none; z-index: 9985;
+  opacity: 0;
+}
+
+/* ============ BLOOD DRIPS ============ */
+#drips { position: fixed; top: 0; left: 0; right: 0; pointer-events: none; z-index: 700; }
+.drip {
+  position: absolute; top: 0; border-radius: 0 0 55% 55%;
+  background: linear-gradient(to bottom, #2a0000 0%, #6b0000 32%, #0a0000 100%);
+  animation: dripFall var(--dd) ease-in var(--dl) infinite; opacity: 0;
+}
+.drip::after {
+  content: ''; position: absolute; bottom: -9px; left: 50%; transform: translateX(-50%);
+  width: 165%; height: 10px; border-radius: 50%; background: #520000;
+}
+@keyframes dripFall {
+  0%{height:0;opacity:0} 4%{opacity:.85}
+  50%{height:var(--dh);opacity:.75} 74%{height:var(--dh);opacity:.1}
+  100%{height:0;opacity:0}
+}
+
+/* ============ LOADING SCREEN ============ */
+#loader {
+  position: fixed; inset: 0; z-index: 99000;
+  background: #000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 2rem;
+}
+#loader-scanlines {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,255,0,.015) 2px, rgba(0,255,0,.015) 4px);
+}
+
+.boot-logo {
+  font-family: 'Cinzel', serif; font-weight: 900;
+  font-size: clamp(2rem, 8vw, 5rem);
+  color: #8b0000; letter-spacing: .15em; text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(139,0,0,.8); margin-bottom: 3rem;
+  animation: bootLogoFlicker 0.3s infinite;
+}
+@keyframes bootLogoFlicker {
+  0%,90%,100%{opacity:1} 92%{opacity:.1} 95%{opacity:.8} 97%{opacity:.2}
+}
+
+.terminal-window {
+  width: 100%; max-width: 680px;
+  background: rgba(0,8,0,.95); border: 1px solid rgba(0,180,0,.3);
+  padding: 1.5rem; font-family: 'VT323', monospace; font-size: 1.05rem;
+  color: #00cc00; line-height: 1.6;
+  box-shadow: 0 0 40px rgba(0,100,0,.15), inset 0 0 30px rgba(0,0,0,.5);
+}
+.terminal-window .t-line { margin: 0; white-space: pre; opacity: 0; }
+.terminal-window .t-line.show { animation: termReveal .05s forwards; }
+@keyframes termReveal { to { opacity: 1; } }
+.t-err { color: #cc0000; }
+.t-warn { color: #cc8800; }
+.t-blink { animation: tblink 1s infinite; }
+@keyframes tblink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+.loader-bar-wrap {
+  width: 100%; max-width: 680px; margin-top: 1.5rem;
+  background: rgba(0,30,0,.5); height: 4px; border: 1px solid rgba(0,150,0,.3);
+}
+.loader-bar {
+  height: 100%; width: 0%; background: #8b0000;
+  box-shadow: 0 0 10px rgba(139,0,0,.8);
+  transition: width .05s;
+}
+
+.skip-btn {
+  margin-top: 2rem; font-family: 'VT323', monospace; font-size: 1rem;
+  color: rgba(0,180,0,.5); background: none; border: none;
+  letter-spacing: .2em; text-transform: uppercase;
+  transition: color .2s; cursor: none;
+}
+.skip-btn:hover { color: rgba(139,0,0,.8); }
+
+/* ============ NAV ============ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 800;
+  background: rgba(0,0,0,.97); backdrop-filter: blur(20px);
+  transform: translateY(-100%); transition: transform .6s cubic-bezier(.77,0,.18,1);
+}
+#nav.visible { transform: translateY(0); }
+.nav-border { height: 1px; background: linear-gradient(to right, transparent, var(--wound), var(--blood), var(--wound), transparent); }
+.nav-inner {
+  max-width: 1300px; margin: 0 auto; padding: 0 96px; height: 62px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Cinzel', serif; font-weight: 900; font-size: .9rem;
+  color: var(--bone); text-decoration: none; letter-spacing: .38em; text-transform: uppercase;
+  text-shadow: 0 0 16px rgba(120,0,0,.6); transition: text-shadow .35s;
+}
+.nav-logo:hover { text-shadow: 0 0 28px rgba(200,0,0,1), 0 0 60px rgba(120,0,0,.4); }
+.nav-links { display: flex; gap: 2.8rem; list-style: none; }
+.nav-links a {
+  font-family: 'Cinzel', serif; font-size: .52rem; letter-spacing: .48em; text-transform: uppercase;
+  color: var(--ghost); text-decoration: none; transition: color .25s; position: relative; padding-bottom: 4px;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; right: 50%;
+  height: 1px; background: var(--blood); transition: left .3s, right .3s;
+}
+.nav-links a:hover { color: var(--bone); }
+.nav-links a:hover::after { left: 0; right: 0; }
+.nav-status {
+  font-family: 'VT323', monospace; font-size: .85rem;
+  color: var(--wound); letter-spacing: .15em;
+  animation: statusBlink 2.8s infinite;
+}
+@keyframes statusBlink { 0%,100%{opacity:.6} 50%{opacity:1} }
+.hamburger { display: none; background: none; border: none; color: var(--bone); font-size: 1.35rem; }
+
+/* MOBILE MENU */
+#mnav {
+  position: fixed; inset: 0; background: #000; z-index: 900;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3rem;
+  transform: translateX(100%); transition: transform .5s cubic-bezier(.77,0,.18,1);
+}
+#mnav.open { transform: translateX(0); }
+#mnav::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(50,0,0,.18) 0%, transparent 72%); pointer-events: none; }
+#mnav a { font-family: 'Cinzel', serif; font-weight: 900; font-size: 2rem; letter-spacing: .25em; text-transform: uppercase; color: var(--bone); text-decoration: none; position: relative; z-index: 1; transition: color .25s; }
+#mnav a:hover { color: var(--arterial); }
+.mob-x { position: absolute; top: 1.4rem; right: 1.5rem; background: none; border: none; color: var(--ghost); font-size: 1.5rem; }
+
+/* ============ THREE.JS CANVAS ============ */
+#chain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 200; }
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 8rem 96px 6rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 46%, rgba(55,0,0,.22) 0%, transparent 60%),
+    radial-gradient(ellipse 24% 90% at 4% 50%,  rgba(0,0,0,.96) 0%, transparent 42%),
+    radial-gradient(ellipse 24% 90% at 96% 50%, rgba(0,0,0,.96) 0%, transparent 42%),
+    radial-gradient(ellipse 90% 36% at 50% 100%,rgba(35,0,0,.38) 0%, transparent 58%);
+  pointer-events: none; z-index: 1;
+}
+
+/* CORRUPTION TEXT above logo */
+.corrupt-label {
+  font-family: 'VT323', monospace; font-size: 1rem;
+  letter-spacing: .6em; text-transform: uppercase;
+  color: rgba(100,0,0,.6); margin-bottom: 1.5rem;
+  position: relative; z-index: 5;
+  animation: corruptLabel 6s infinite;
+}
+@keyframes corruptLabel {
+  0%,90%,100%{opacity:.6;filter:none}
+  91%{opacity:1;filter:blur(.5px)}
+  93%{opacity:.2;filter:none}
+  95%{opacity:.8;letter-spacing:.8em}
+  97%{opacity:.6;letter-spacing:.6em}
+}
+
+/* LOGO */
+.logo-wrap { position: relative; z-index: 5; width: 100%; max-width: 860px; margin: 0 auto; }
+.logo-svg {
+  width: 100%; height: auto; display: block;
+  filter: drop-shadow(0 0 28px rgba(193,31,29,.75)) drop-shadow(0 0 65px rgba(120,0,0,.45));
+  animation: logoBreath 10s ease-in-out infinite;
+}
+.logo-glitch { position: absolute; inset: 0; opacity: 0; animation: logoGlitchAnim 8s infinite; }
+.logo-glitch svg { width: 100%; height: 100%; filter: drop-shadow(2px 0 0 rgba(0,255,255,.4)) drop-shadow(-2px 0 0 rgba(255,0,0,.4)); }
+@keyframes logoBreath {
+  0%,100%{filter:drop-shadow(0 0 28px rgba(193,31,29,.75)) drop-shadow(0 0 65px rgba(120,0,0,.45))}
+  50%{filter:drop-shadow(0 0 45px rgba(210,30,30,1)) drop-shadow(0 0 100px rgba(165,0,0,.7)) drop-shadow(0 0 200px rgba(100,0,0,.3))}
+}
+@keyframes logoGlitchAnim {
+  0%,86%,88%,90%,100%{opacity:0}
+  87%{opacity:.9;transform:translateX(4px)}
+  89%{opacity:.6;transform:translateX(-3px)}
+}
+
+/* CLEAVERS */
+.cleavers-wrap { position: relative; z-index: 5; width: 100%; max-width: 580px; margin: -2rem auto 0; }
+.cleavers-svg {
+  width: 100%; height: auto; display: block;
+  filter: drop-shadow(0 8px 25px rgba(0,0,0,.99)) drop-shadow(0 0 32px rgba(80,0,0,.32));
+  animation: clvHang 9s ease-in-out infinite;
+}
+@keyframes clvHang {
+  0%,100%{transform:translateY(0) rotate(0deg)} 33%{transform:translateY(-8px) rotate(.2deg)} 66%{transform:translateY(-4px) rotate(-.12deg)}
+}
+
+/* ORNAMENT */
+.hero-div { display: flex; align-items: center; justify-content: center; gap: 7px; margin: 2rem 0 1.4rem; position: relative; z-index: 5; }
+.hd-line { flex: 1; max-width: 110px; height: 1px; background: linear-gradient(to right, transparent, var(--wound), transparent); }
+.hd-line.r { background: linear-gradient(to left, transparent, var(--wound), transparent); }
+.hd-sym { font-size: .9rem; color: var(--wound); opacity: .5; margin: 0 6px; }
+.hd-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--blood); opacity: .4; margin: 0 2px; }
+
+.hero-sub { font-family: 'Cinzel', serif; font-size: .5rem; letter-spacing: .7em; text-transform: uppercase; color: var(--ghost); position: relative; z-index: 5; }
+.hero-sub .sep { color: var(--wound); margin: 0 .5em; opacity: .55; }
+
+/* HORROR MENU BUTTONS */
+.hero-ctas { display: flex; flex-wrap: wrap; gap: 1.4rem; justify-content: center; margin-top: 3.2rem; position: relative; z-index: 5; }
+
+.btn-horror {
+  display: inline-flex; align-items: center; gap: .8rem;
+  padding: 1.15rem 2.8rem;
+  background: linear-gradient(135deg, var(--wound) 0%, var(--blood) 50%, var(--wound) 100%);
+  color: var(--bone); font-family: 'Cinzel', serif; font-size: .58rem;
+  letter-spacing: .42em; text-transform: uppercase; text-decoration: none;
+  border: 1px solid var(--wound); position: relative; overflow: hidden;
+  transition: all .4s; animation: menuPulse 5s infinite;
+}
+.btn-horror::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, transparent 52%); }
+.btn-horror::after {
+  content: attr(data-label); position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'VT323', monospace; font-size: .95rem; letter-spacing: .12em;
+  color: var(--arterial); opacity: 0; transition: opacity .2s;
+}
+.btn-horror:hover::after { opacity: .15; }
+.btn-horror:hover { background: linear-gradient(135deg, var(--blood) 0%, var(--gore) 50%, var(--blood) 100%); box-shadow: 0 0 40px rgba(180,0,0,.55), 0 0 80px rgba(100,0,0,.22); transform: translateY(-3px); }
+@keyframes menuPulse { 0%,100%{box-shadow:0 0 0 0 rgba(90,0,0,.7)} 50%{box-shadow:0 0 0 18px transparent} }
+
+.btn-ghost-horror {
+  display: inline-flex; align-items: center; gap: .8rem;
+  padding: 1.15rem 2.8rem; background: transparent;
+  border: 1px solid var(--ghost); color: var(--ghost);
+  font-family: 'Cinzel', serif; font-size: .58rem; letter-spacing: .42em; text-transform: uppercase;
+  text-decoration: none; transition: all .35s; position: relative; overflow: hidden;
+}
+.btn-ghost-horror:hover { border-color: var(--arterial); color: var(--arterial); box-shadow: 0 0 24px rgba(130,0,0,.2); transform: translateY(-3px); }
+
+.ldot { width: 6px; height: 6px; border-radius: 50%; background: var(--arterial); flex-shrink: 0; animation: ldp 2s infinite; }
+@keyframes ldp { 0%,100%{box-shadow:0 0 0 0 rgba(204,0,0,.9)} 50%{box-shadow:0 0 0 5px transparent} }
+
+/* SOCIALS */
+.hero-soc { display: flex; gap: 2.5rem; margin-top: 4rem; font-size: 1.3rem; position: relative; z-index: 5; }
+.hero-soc a { color: var(--ghost); text-decoration: none; transition: color .3s, text-shadow .3s, transform .25s; display: flex; flex-direction: column; align-items: center; gap: .38rem; }
+.hero-soc a span { font-family: 'VT323', monospace; font-size: .75rem; letter-spacing: .25em; text-transform: uppercase; }
+.hero-soc a:hover { color: var(--bone); text-shadow: 0 0 18px rgba(200,0,0,.8); transform: translateY(-4px); }
+
+.scroll-h { position: absolute; bottom: 2.2rem; left: 50%; transform: translateX(-50%); font-family: 'VT323', monospace; font-size: .85rem; letter-spacing: .7em; color: var(--ghost); text-transform: uppercase; animation: shb 4s ease-in-out infinite; z-index: 5; display: flex; flex-direction: column; align-items: center; gap: .5rem; }
+@keyframes shb { 0%,100%{transform:translateX(-50%) translateY(0);opacity:.35} 50%{transform:translateX(-50%) translateY(10px);opacity:.8} }
+
+/* ============ SECTION SYSTEM ============ */
+.sec-divide { height: 1px; background: linear-gradient(to right, transparent, var(--wound), transparent); opacity: .3; }
+section { padding: 8rem 96px; position: relative; }
+.s-dark { background: var(--pit); }
+.wrap { max-width: 1200px; margin: 0 auto; position: relative; }
+
+.s-classified {
+  font-family: 'VT323', monospace; font-size: .9rem; letter-spacing: .7em;
+  text-transform: uppercase; color: var(--wound); margin-bottom: .5rem;
+  display: block; opacity: .65;
+}
+.s-tit {
+  font-family: 'Cinzel', serif; font-weight: 900;
+  font-size: clamp(2.2rem, 5.8vw, 3.8rem);
+  color: var(--bone); line-height: .9; letter-spacing: .07em; text-transform: uppercase;
+  text-shadow: 3px 3px 0 rgba(0,0,0,1), 0 0 35px rgba(80,0,0,.3);
+}
+
+/* CHAIN RULE */
+.chain-rule { display: block; width: 100%; height: 44px; margin: 2rem 0 4rem; }
+
+/* ============ PLAYER ============ */
+.player-ritual {
+  background: var(--crypt); border: 1px solid rgba(90,0,0,.5); padding: 2.5rem; position: relative; overflow: hidden;
+}
+.player-ritual::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, var(--wound), var(--blood), var(--wound), transparent); }
+.player-ritual::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(to right, transparent, var(--wound), transparent); opacity: .5; }
+.pr-glow { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 55% at 50% 100%, rgba(35,0,0,.22) 0%, transparent 70%); pointer-events: none; }
+.cm { position: absolute; width: 15px; height: 15px; opacity: .4; }
+.cm.tl { top: 8px; left: 8px; border-top: 1.5px solid var(--blood); border-left: 1.5px solid var(--blood); }
+.cm.tr { top: 8px; right: 8px; border-top: 1.5px solid var(--blood); border-right: 1.5px solid var(--blood); }
+.cm.bl { bottom: 8px; left: 8px; border-bottom: 1.5px solid var(--blood); border-left: 1.5px solid var(--blood); }
+.cm.br { bottom: 8px; right: 8px; border-bottom: 1.5px solid var(--blood); border-right: 1.5px solid var(--blood); }
+.player-ritual iframe { display: block; width: 100%; position: relative; z-index: 1; }
+.tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; position: relative; z-index: 1; }
+.tag { font-family: 'VT323', monospace; font-size: .85rem; letter-spacing: .18em; text-transform: uppercase; padding: .25rem .75rem; border: 1px solid var(--ghost); color: var(--ghost); transition: border-color .2s, color .2s; }
+.tag:hover { border-color: var(--blood); color: var(--bone); }
+.tag.ac { border-color: var(--wound); color: var(--blood); }
+
+/* ============ SETS — CLASSIFIED FILES ============ */
+.sets-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1px; background: var(--ghost); }
+
+.sc {
+  background: var(--crypt); padding: 0; position: relative; overflow: hidden;
+  transition: background .5s;
+}
+.sc:hover { background: var(--iron); }
+
+/* File header bar */
+.sc-header {
+  background: rgba(30,0,0,.8); padding: .6rem 1.2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(90,0,0,.3);
+}
+.sc-file-num { font-family: 'VT323', monospace; font-size: .85rem; color: var(--wound); letter-spacing: .15em; }
+.sc-status { font-family: 'VT323', monospace; font-size: .75rem; color: var(--gore); letter-spacing: .1em; animation: statusBlink 2s infinite; }
+
+.sc-body { padding: 1.4rem 1.4rem 1.6rem; }
+
+.ct { aspect-ratio: 16/9; background: var(--abyss); border: 1px solid var(--ghost); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; position: relative; overflow: hidden; }
+/* VHS overlay */
+.ct::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0, transparent 4px, rgba(0,0,0,.04) 4px, rgba(0,0,0,.04) 5px), linear-gradient(to bottom, rgba(80,0,0,.04) 0%, transparent 40%, rgba(0,0,0,.08) 100%); z-index: 2; pointer-events: none; }
+/* random VHS glitch line */
+.ct::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 2px; height: 0; background: linear-gradient(to bottom, rgba(120,0,0,.85), transparent); border-radius: 0 0 2px 2px; transition: height .6s .1s; z-index: 3; }
+.sc:hover .ct::after { height: 55%; }
+.ct i { font-size: 3rem; color: #0e0101; transition: color .4s, text-shadow .4s; position: relative; z-index: 1; }
+.sc:hover .ct i { color: var(--wound); text-shadow: 0 0 30px rgba(120,0,0,.7); }
+
+/* left blood stripe */
+.sc::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--arterial), var(--blood), var(--wound)); transform: scaleY(0); transform-origin: top; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+.sc:hover::before { transform: scaleY(1); }
+
+.sc-file-label { font-family: 'VT323', monospace; font-size: .78rem; letter-spacing: .22em; color: var(--wound); text-transform: uppercase; margin-bottom: .2rem; opacity: .7; }
+.cdate { font-family: 'VT323', monospace; font-size: .75rem; letter-spacing: .25em; color: var(--gore); text-transform: uppercase; opacity: .65; }
+.ctit { font-family: 'Nosifer', cursive; font-size: .88rem; color: var(--bone); margin: .4rem 0 .3rem; line-height: 1.3; }
+.cgen { font-family: 'VT323', monospace; font-size: .78rem; color: var(--ash); letter-spacing: .18em; text-transform: uppercase; }
+.cd { font-family: 'VT323', monospace; font-size: .72rem; background: rgba(0,0,0,.9); padding: .18rem .5rem; color: var(--ash); letter-spacing: .1em; border-left: 1.5px solid var(--wound); }
+
+.cplay { display: inline-flex; align-items: center; gap: .5rem; font-family: 'VT323', monospace; font-size: .88rem; letter-spacing: .22em; text-transform: uppercase; color: var(--ash); background: none; border: none; margin-top: 1.1rem; transition: color .25s; }
+.cplay:hover { color: var(--gore); }
+
+/* HIDDEN DATA — revealed on hover */
+.sc-hidden { font-family: 'VT323', monospace; font-size: .75rem; color: rgba(139,0,0,.6); letter-spacing: .12em; margin-top: .6rem; opacity: 0; transform: translateY(4px); transition: opacity .35s .1s, transform .35s .1s; }
+.sc:hover .sc-hidden { opacity: 1; transform: translateY(0); }
+
+.lmw { text-align: center; margin-top: 3rem; }
+
+/* ============ VIDEO ============ */
+.vshell { border: 1px solid rgba(90,0,0,.4); background: var(--crypt); overflow: hidden; position: relative; }
+.vshell::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(to right, transparent, var(--wound), var(--blood), var(--wound), transparent); z-index: 2; }
+.vmain { aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; position: relative; background: var(--abyss); overflow: hidden; }
+.vmain::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(to bottom, transparent 0, transparent 3px, rgba(0,0,0,.055) 3px, rgba(0,0,0,.055) 4px); z-index: 1; pointer-events: none; }
+.vmain::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(40,0,0,.12) 0%, rgba(0,0,0,.6) 100%); z-index: 1; pointer-events: none; }
+.vph { text-align: center; position: relative; z-index: 2; }
+.vph i { display: block; font-size: 3.5rem; color: #0e0101; margin-bottom: 1.2rem; }
+.vph p { font-family: 'VT323', monospace; font-size: 1.1rem; letter-spacing: .4em; color: var(--ghost); text-transform: uppercase; }
+.vph .vcs { font-family: 'Nosifer', cursive; font-size: 1.3rem; color: var(--blood); margin-top: .6rem; text-shadow: 0 0 22px rgba(180,0,0,.5); }
+.lb { position: absolute; top: 1rem; left: 1rem; display: none; align-items: center; gap: .5rem; background: var(--blood); padding: .3rem .8rem; font-family: 'VT323', monospace; font-size: .9rem; letter-spacing: .32em; z-index: 4; }
+.lb-d { width: 5px; height: 5px; border-radius: 50%; background: #fff; animation: ldp 1.2s infinite; }
+.prow { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--ghost); border-top: 1px solid var(--ghost); }
+.pc { display: flex; align-items: center; gap: 1.2rem; padding: 1.5rem 1.8rem; background: var(--crypt); text-decoration: none; color: inherit; transition: background .4s; position: relative; overflow: hidden; }
+.pc:hover { background: var(--iron); }
+.pc::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1.5px; background: linear-gradient(to right, var(--abyss), var(--wound), transparent); transform: scaleX(0); transform-origin: left; transition: transform .45s; }
+.pc:hover::after { transform: scaleX(1); }
+.pi { width: 56px; height: 56px; border: 1px solid var(--ghost); display: flex; align-items: center; justify-content: center; font-size: 1.55rem; flex-shrink: 0; background: var(--abyss); transition: border-color .25s, box-shadow .25s; }
+.pc:hover .pi { border-color: var(--wound); box-shadow: 0 0 14px rgba(80,0,0,.22); }
+.pt { font-family: 'Nosifer', cursive; font-size: .75rem; color: var(--bone); }
+.ps { font-family: 'VT323', monospace; font-size: .8rem; color: var(--ash); margin-top: .3rem; letter-spacing: .12em; }
+
+/* ============ SECRET SECTION ============ */
+.secret-section {
+  padding: 6rem 96px; background: var(--void);
+  position: relative; overflow: hidden;
+}
+.secret-section::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at center, rgba(30,0,0,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.secret-trigger {
+  display: block; width: 100%; text-align: center;
+  font-family: 'VT323', monospace; font-size: .75rem;
+  letter-spacing: .6em; color: rgba(90,0,0,.15);
+  text-transform: uppercase; padding: 2rem;
+  background: none; border: none; transition: color .5s;
+  position: relative;
+}
+.secret-trigger:hover { color: rgba(139,0,0,.5); }
+.secret-trigger::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 1px; height: 0; background: var(--wound); opacity: 0;
+  transition: height 1s, opacity .5s;
+}
+.secret-trigger:hover::before { height: 100px; opacity: .3; }
+
+.secret-content {
+  max-height: 0; overflow: hidden;
+  transition: max-height 1.2s cubic-bezier(.4,0,.2,1);
+  text-align: center;
+}
+.secret-content.revealed { max-height: 500px; }
+.secret-msg {
+  font-family: 'VT323', monospace; font-size: 1rem;
+  color: rgba(139,0,0,.7); letter-spacing: .2em; line-height: 1.8;
+  padding: 2rem; border: 1px solid rgba(90,0,0,.2);
+  background: rgba(8,0,0,.5); margin-top: 1rem;
+  animation: secretReveal .5s ease-out;
+}
+@keyframes secretReveal { from{opacity:0;filter:blur(8px)} to{opacity:1;filter:none} }
+
+/* ============ ABOUT ============ */
+.ag { display: grid; grid-template-columns: 1fr 1fr; gap: 5.5rem; align-items: center; }
+.at p { color: var(--ash); line-height: 2.1; font-size: .82rem; margin-bottom: 1.2rem; }
+.at p strong { color: var(--gore); font-style: italic; }
+.stats { display: flex; gap: 3.5rem; margin-top: 3.5rem; flex-wrap: wrap; }
+.stn { font-family: 'Nosifer', cursive; font-size: 2rem; color: var(--gore); line-height: 1; text-shadow: 0 0 20px rgba(200,0,0,.4); }
+.stl { font-family: 'VT323', monospace; font-size: .85rem; letter-spacing: .3em; text-transform: uppercase; color: var(--ghost); margin-top: .3rem; }
+.av { position: relative; }
+.gf { border: 1px solid rgba(90,0,0,.4); background: var(--crypt); aspect-ratio: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.gf::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(55,0,0,.18) 0%, transparent 70%); }
+.co { position: absolute; width: 22px; height: 22px; opacity: .42; }
+.co.tl { top: 8px; left: 8px; border-top: 1.5px solid var(--gore); border-left: 1.5px solid var(--gore); }
+.co.tr { top: 8px; right: 8px; border-top: 1.5px solid var(--gore); border-right: 1.5px solid var(--gore); }
+.co.bl { bottom: 8px; left: 8px; border-bottom: 1.5px solid var(--gore); border-left: 1.5px solid var(--gore); }
+.co.br { bottom: 8px; right: 8px; border-bottom: 1.5px solid var(--gore); border-right: 1.5px solid var(--gore); }
+.gf > i { font-size: 7rem; color: #0e0000; position: relative; z-index: 1; text-shadow: 0 0 45px rgba(65,0,0,.35); animation: gfp 9s ease-in-out infinite; }
+@keyframes gfp { 0%,100%{opacity:.3;transform:scale(1)} 50%{opacity:.72;transform:scale(1.05)} }
+.gf::after { content: '✦ ✦ ✦'; position: absolute; bottom: .9rem; left: 0; right: 0; text-align: center; color: var(--wound); font-size: .68rem; letter-spacing: .6em; opacity: .38; }
+.facc { position: absolute; bottom: -13px; right: -13px; width: 80px; height: 80px; border: 1px solid var(--wound); opacity: .28; }
+
+/* ============ BOOKING ============ */
+.bg-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 5.5rem; align-items: start; }
+.ci p { font-size: .8rem; color: var(--ash); line-height: 2; margin-bottom: 2.2rem; }
+.cl-links { display: flex; flex-direction: column; gap: 1.2rem; }
+.cl-links a { display: flex; align-items: center; gap: 1rem; font-family: 'VT323', monospace; font-size: .95rem; color: var(--bone); text-decoration: none; transition: color .2s; letter-spacing: .08em; }
+.cl-links a i { width: 1.2rem; color: var(--gore); flex-shrink: 0; }
+.cl-links a:hover { color: var(--gore); }
+.ff { width: 100%; background: var(--crypt); border: 1px solid rgba(90,0,0,.4); color: var(--bone); font-family: 'Share Tech Mono', monospace; font-size: .8rem; padding: .95rem 1.1rem; margin-bottom: .8rem; outline: none; transition: border-color .3s, box-shadow .3s; -webkit-appearance: none; border-radius: 0; }
+.ff::placeholder { color: var(--ghost); }
+.ff:focus { border-color: var(--blood); box-shadow: 0 0 18px rgba(120,0,0,.2); }
+select.ff { background-color: var(--crypt); }
+textarea.ff { resize: vertical; min-height: 140px; }
+.bsub { width: 100%; padding: 1.15rem; background: linear-gradient(135deg, var(--wound) 0%, var(--blood) 50%, var(--wound) 100%); color: var(--bone); border: 1px solid var(--wound); font-family: 'Cinzel', serif; font-size: .58rem; letter-spacing: .38em; text-transform: uppercase; transition: all .35s; position: relative; overflow: hidden; }
+.bsub::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, transparent 52%); }
+.bsub:hover { background: linear-gradient(135deg, var(--blood) 0%, var(--gore) 50%, var(--blood) 100%); box-shadow: 0 0 30px rgba(180,0,0,.42); transform: translateY(-2px); }
+
+/* ============ FOOTER — DISTORTED TRANSMISSION ============ */
+footer { background: var(--void); border-top: 1px solid var(--wound); }
+.ftl { height: 1px; background: linear-gradient(to right, transparent, var(--wound), var(--blood), var(--wound), transparent); }
+.fi { max-width: 1300px; margin: 0 auto; padding: 4rem 96px; display: flex; flex-direction: column; align-items: center; gap: 2rem; text-align: center; }
+.fl { font-family: 'Cinzel', serif; font-weight: 900; font-size: 1.6rem; color: var(--bone); text-shadow: 0 0 28px rgba(120,0,0,.5), 3px 3px 0 rgba(0,0,0,.9); letter-spacing: .25em; text-transform: uppercase; }
+.ftag { font-family: 'VT323', monospace; font-size: .9rem; letter-spacing: .55em; color: var(--ghost); text-transform: uppercase; animation: statusBlink 4s infinite; }
+.ffrequency { font-family: 'VT323', monospace; font-size: .75rem; color: rgba(90,0,0,.4); letter-spacing: .3em; }
+.forn { display: flex; align-items: center; gap: 8px; opacity: .28; }
+.forn i { font-size: .68rem; color: var(--wound); margin: 0 6px; }
+.fsoc { display: flex; gap: 2.2rem; font-size: 1.15rem; }
+.fsoc a { color: var(--ghost); text-decoration: none; transition: color .28s, text-shadow .28s, transform .22s; }
+.fsoc a:hover { color: var(--bone); text-shadow: 0 0 12px rgba(200,0,0,.65); transform: translateY(-3px); }
+.fcopy { font-family: 'VT323', monospace; font-size: .8rem; color: var(--ghost); letter-spacing: .2em; }
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:960px) {
+  .nav-links { display: none; } .hamburger { display: block; }
+  section, .secret-section { padding: 5rem 2rem; }
+  .nav-inner, .fi { padding-left: 2rem; padding-right: 2rem; }
+  .hero { padding: 6.5rem 2rem 5rem; }
+  .ag { grid-template-columns: 1fr; gap: 3.5rem; } .av { display: none; }
+  .bg-grid { grid-template-columns: 1fr; gap: 3.5rem; }
+  .prow { grid-template-columns: 1fr; }
+  .sets-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:520px) {
+  .logo-wrap { max-width: 98vw; } .cleavers-wrap { max-width: 86vw; }
+  .hero-ctas { gap: 1rem; } .stats { gap: 2rem; }
+  #chain-canvas { display: none; }
+  #cursor-ring, #cursor-dot { display: none; }
+  body { cursor: auto; } a, button { cursor: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ ATMOSPHERIC LAYERS ═══ -->
+<div id="scanlines" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
+<div id="chroma" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
+<canvas id="glitch-canvas" aria-hidden="true"></canvas>
+
+<!-- FLASHLIGHT -->
+<div id="flashlight" aria-hidden="true"></div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-ring" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+
+<!-- THREE.JS CHAIN CANVAS -->
+<canvas id="chain-canvas" aria-hidden="true"></canvas>
+
+<!-- BLOOD DRIPS -->
+<div id="drips" aria-hidden="true">
+  <div class="drip" style="left:4%;  width:3px;--dd:9s;  --dl:0s;   --dh:155px"></div>
+  <div class="drip" style="left:11%; width:4px;--dd:12s; --dl:4.2s; --dh:75px"></div>
+  <div class="drip" style="left:23%; width:3px;--dd:7.5s;--dl:1.5s; --dh:182px"></div>
+  <div class="drip" style="left:37%; width:5px;--dd:15s; --dl:5.8s; --dh:55px"></div>
+  <div class="drip" style="left:50%; width:3px;--dd:10s; --dl:1s;   --dh:135px"></div>
+  <div class="drip" style="left:63%; width:4px;--dd:11.5s;--dl:3.3s;--dh:82px"></div>
+  <div class="drip" style="left:76%; width:3px;--dd:8s;  --dl:2.2s; --dh:168px"></div>
+  <div class="drip" style="left:88%; width:4px;--dd:13.5s;--dl:5s;  --dh:65px"></div>
+  <div class="drip" style="left:96%; width:3px;--dd:9.5s;--dl:0.7s; --dh:120px"></div>
+</div>
+
+<!-- ═══ LOADING SCREEN ═══ -->
+<div id="loader">
+  <div id="loader-scanlines" aria-hidden="true"></div>
+  <div class="boot-logo">THE BUTCHERY</div>
+  <div class="terminal-window" id="terminal" aria-live="polite"></div>
+  <div class="loader-bar-wrap"><div class="loader-bar" id="lbar"></div></div>
+  <button class="skip-btn" id="skipBtn" aria-label="Skip intro">[ SKIP ]</button>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<header id="nav">
+  <div class="nav-border"></div>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">The Butchery</a>
+    <ul class="nav-links">
+      <li><a href="#sets">Sets</a></li>
+      <li><a href="#video">Video</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#booking">Booking</a></li>
+    </ul>
+    <span class="nav-status">● SYS:ONLINE</span>
+    <button class="hamburger" id="ham" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<nav id="mnav" aria-hidden="true">
+  <button class="mob-x" id="mx" aria-label="Chiudi"><i class="fas fa-times"></i></button>
+  <a href="#sets" class="ml">Sets</a>
+  <a href="#video" class="ml">Video</a>
+  <a href="#about" class="ml">About</a>
+  <a href="#booking" class="ml">Booking</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <p class="corrupt-label">⊗ ACCESSO RISTRETTO ⊗ TRASMISSIONE IN CORSO ⊗</p>
+  <div class="logo-wrap">
+    <div style="position:relative">
+      ##LOGO##
+      <div class="logo-glitch" aria-hidden="true">##LOGO##</div>
+    </div>
+  </div>
+  <div class="cleavers-wrap">##CLEAV##</div>
+  <div class="hero-div" aria-hidden="true">
+    <div class="hd-line"></div>
+    <span class="hd-dot"></span><span class="hd-sym"><i class="fas fa-skull"></i></span>
+    <span class="hd-dot"></span><span class="hd-sym" style="font-size:.7rem"><i class="fas fa-cross"></i></span>
+    <span class="hd-dot"></span><span class="hd-sym"><i class="fas fa-skull"></i></span>
+    <span class="hd-dot"></span>
+    <div class="hd-line r"></div>
+  </div>
+  <p class="hero-sub">Hard Techno<span class="sep">⛧</span>Horror Visuals<span class="sep">⛧</span>Raw</p>
+  <div class="hero-ctas">
+    <a href="#latest" class="btn-horror" data-label="INITIALIZING..."><i class="fas fa-play"></i>&nbsp;Entra nel Rituale</a>
+    <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener" class="btn-ghost-horror"><span class="ldot"></span>&nbsp;Trasmissione Live</a>
+  </div>
+  <div class="hero-soc">
+    <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener"><i class="fab fa-youtube"></i><span>YouTube</span></a>
+    <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener"><i class="fab fa-twitch"></i><span>Twitch</span></a>
+    <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i><span>Instagram</span></a>
+  </div>
+  <div class="scroll-h"><span>SCENDI</span><i class="fas fa-chevron-down"></i></div>
+</section>
+
+<div class="sec-divide"></div>
+
+<!-- ═══ LATEST ═══ -->
+<section id="latest" class="s-dark">
+  <div class="wrap">
+    <span class="s-classified">// REGISTRAZIONE 001 — DOCUMENTO RISERVATO</span>
+    <h2 class="s-tit">Ultima Mattanza</h2>
+    <canvas class="chain-rule" id="cr1"></canvas>
+    <div class="player-ritual">
+      <div class="pr-glow"></div>
+      <div class="cm tl"></div><div class="cm tr"></div><div class="cm bl"></div><div class="cm br"></div>
+      <iframe width="100%" height="166" scrolling="no" frameborder="no" loading="lazy" allow="autoplay"
+        src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/thebutcherymilano&color=%235a0000&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+      </iframe>
+      <div class="tags">
+        <span class="tag ac">Hard Techno</span>
+        <span class="tag">145 BPM</span>
+        <span class="tag">2h 30min</span>
+        <span class="tag">Live @ Studio Milano</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divide"></div>
+
+<!-- ═══ SETS ═══ -->
+<section id="sets">
+  <div class="wrap">
+    <span class="s-classified">// ARCHIVIO OSCURO — ACCESSO LIVELLO Ω</span>
+    <h2 class="s-tit">Tutti i Set</h2>
+    <canvas class="chain-rule" id="cr2"></canvas>
+    <div class="sets-grid">
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #001</span>
+          <span class="sc-status">CLASSIFIED</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-skull"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">2:14:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: INDUSTRIALE</div>
+          <time class="cdate">01.01.2026 — 03:22 A.M.</time>
+          <h3 class="ctit">Rave in The Abyss</h3>
+          <p class="cgen">Hard Techno / Industrial</p>
+          <p class="sc-hidden">⚠ CONTENUTO DISTURBANTE — 145 BPM — DURATA: 2h 14min<br>REGISTRATO: Studio Sotterraneo B — Milano</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #002</span>
+          <span class="sc-status">RESTRICTED</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-ghost"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">1:45:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: SCHRANZ</div>
+          <time class="cdate">15.12.2025 — 01:47 A.M.</time>
+          <h3 class="ctit">Midnight Slaughter</h3>
+          <p class="cgen">Schranz / Hard Techno</p>
+          <p class="sc-hidden">⚠ MATERIALE NON APPROVATO — 148 BPM<br>AVVISTAMENTI NON SPIEGATI DURANTE LA SESSIONE</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #003</span>
+          <span class="sc-status">TOP SECRET</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-spider"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">3:00:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: RITUALE</div>
+          <time class="cdate">01.11.2025 — 00:00 A.M.</time>
+          <h3 class="ctit">Halloween Massacre</h3>
+          <p class="cgen">Industrial / EBM</p>
+          <p class="sc-hidden">⚠ SESSIONE DURATA 3 ORE — 150 BPM<br>SOGGETTI RIMASTI IN TRANCE POST-EVENTO</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #004</span>
+          <span class="sc-status">CLASSIFIED</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-eye"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">2:00:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: ACID</div>
+          <time class="cdate">20.10.2025 — 02:15 A.M.</time>
+          <h3 class="ctit">Flesh Protocol</h3>
+          <p class="cgen">Schranz / Acid</p>
+          <p class="sc-hidden">⚠ FREQUENZE SUBSONICHE RILEVATE — 143 BPM<br>EFFETTI PSICOLOGICI DOCUMENTATI</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #005</span>
+          <span class="sc-status">RESTRICTED</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-biohazard"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">1:58:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: INDUSTRIALE</div>
+          <time class="cdate">05.10.2025 — 04:30 A.M.</time>
+          <h3 class="ctit">Toxic Void</h3>
+          <p class="cgen">Hard Techno / EBM</p>
+          <p class="sc-hidden">⚠ AMBIENTE TOSSICO — 146 BPM<br>REGISTRAZIONE RECUPERATA DA DISPOSITIVO ABBANDONATO</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+      <article class="sc">
+        <div class="sc-header">
+          <span class="sc-file-num">FILE #006</span>
+          <span class="sc-status">CLASSIFIED</span>
+        </div>
+        <div class="sc-body">
+          <div class="ct" style="position:relative">
+            <i class="fas fa-bone"></i>
+            <span class="cd" style="position:absolute;bottom:.5rem;right:.5rem">2:30:00</span>
+          </div>
+          <div class="sc-file-label">SPECIMEN AUDIO — TIPO: INDUSTRIALE</div>
+          <time class="cdate">15.09.2025 — 05:12 A.M.</time>
+          <h3 class="ctit">Bloodstream</h3>
+          <p class="cgen">Industrial / Hard Techno</p>
+          <p class="sc-hidden">⚠ ORIGINE SCONOSCIUTA — 147 BPM<br>ULTIME COORDINATE: 45.4654° N, 9.1859° E</p>
+          <button class="cplay"><i class="fas fa-play"></i>&nbsp;&nbsp;Accedi al File</button>
+        </div>
+      </article>
+
+    </div>
+    <div class="lmw">
+      <button class="btn-ghost-horror" style="margin-top:2rem">
+        Dissotterra altri &nbsp;<i class="fas fa-chevron-down"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divide"></div>
+
+<!-- ═══ VIDEO ═══ -->
+<section id="video" class="s-dark">
+  <div class="wrap">
+    <span class="s-classified">// TRASMISSIONE LIVE — CANALE NON AUTORIZZATO</span>
+    <h2 class="s-tit">Live & Video</h2>
+    <canvas class="chain-rule" id="cr3"></canvas>
+    <div class="vshell">
+      <div class="vmain">
+        <div class="cm tl"></div><div class="cm tr"></div><div class="cm bl"></div><div class="cm br"></div>
+        <div class="lb"><div class="lb-d"></div>&nbsp;LIVE</div>
+        <div class="vph">
+          <i class="fas fa-video"></i>
+          <p>Prossima trasmissione</p>
+          <p class="vcs">In Arrivo</p>
+        </div>
+      </div>
+      <div class="prow">
+        <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener" class="pc">
+          <div class="pi"><i class="fab fa-youtube" style="color:#cc0000"></i></div>
+          <div><p class="pt">YouTube</p><p class="ps">@TheButcheryMilano</p></div>
+        </a>
+        <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener" class="pc">
+          <div class="pi"><i class="fab fa-twitch" style="color:#9146ff"></i></div>
+          <div><p class="pt">Twitch</p><p class="ps">thebutcherymilano — Live ogni venerdì</p></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECRET SECTION ═══ -->
+<div class="secret-section">
+  <button class="secret-trigger" id="secretTrigger" aria-label="Trigger hidden content">
+    ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·
+  </button>
+  <div class="secret-content" id="secretContent">
+    <div class="secret-msg" aria-live="polite">
+      FREQUENZA: 88.8 MHz — SEGNALE CAPTATO<br>
+      "NON TUTTI I SUONI SONO FATTI PER ESSERE ASCOLTATI"<br>
+      "NON TUTTI I RITUAL HANNO UNA FINE"<br>
+      SE HAI TROVATO QUESTO MESSAGGIO — SEI GIÀ DENTRO<br>
+      ∴ THE BUTCHERY ESISTE DOVE LA MUSICA INCONTRA IL VUOTO ∴<br>
+      [TRASMISSIONE TERMINATA — RIF. #TB-2025-Ω]
+    </div>
+  </div>
+</div>
+
+<div class="sec-divide"></div>
+
+<!-- ═══ ABOUT ═══ -->
+<section id="about">
+  <div class="wrap">
+    <span class="s-classified">// IL MITO — DOCUMENTO D'ORIGINE</span>
+    <h2 class="s-tit">About</h2>
+    <canvas class="chain-rule" id="cr4"></canvas>
+    <div class="ag">
+      <div class="at">
+        <p><strong>The Butchery</strong> è uno studio di streaming e registrazione dedicato ai suoni più crudi della scena hard techno milanese.</p>
+        <p>Ogni set è un rituale audiovisivo — beat martellanti fusi con visual horror. Nessuna concessione. Nessun compromesso.</p>
+        <p>Il rave viene da te. Ogni venerdì. Live.</p>
+        <div class="stats">
+          <div><div class="stn">50+</div><div class="stl">Set</div></div>
+          <div><div class="stn">10K+</div><div class="stl">Play</div></div>
+          <div><div class="stn">2K+</div><div class="stl">Seguaci</div></div>
+        </div>
+      </div>
+      <div class="av">
+        <div class="gf">
+          <div class="co tl"></div><div class="co tr"></div><div class="co bl"></div><div class="co br"></div>
+          <i class="fas fa-skull-crossbones"></i>
+        </div>
+        <div class="facc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divide"></div>
+
+<!-- ═══ BOOKING ═══ -->
+<section id="booking" class="s-dark">
+  <div class="wrap">
+    <span class="s-classified">// CONTATTO — SE SEI DEGNO</span>
+    <h2 class="s-tit">Booking</h2>
+    <canvas class="chain-rule" id="cr5"></canvas>
+    <div class="bg-grid">
+      <div class="ci">
+        <p>Streaming live, registrazioni, collaborazioni, live show.<br>Scrivici — risponderemo se riteniamo adeguato.</p>
+        <div class="cl-links">
+          <a href="mailto:Thebutcherymilano@gmail.com"><i class="fas fa-envelope"></i>Thebutcherymilano@gmail.com</a>
+          <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i>@thebutchery_milano</a>
+          <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener"><i class="fab fa-youtube"></i>@TheButcheryMilano</a>
+          <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener"><i class="fab fa-twitch"></i>thebutcherymilano</a>
+        </div>
+      </div>
+      <form onsubmit="fsubmit(event)">
+        <input class="ff" type="text" placeholder="Il tuo nome" required autocomplete="name">
+        <input class="ff" type="email" placeholder="La tua email" required autocomplete="email">
+        <select class="ff">
+          <option value="">Tipo di offerta</option>
+          <option>Booking live</option><option>Collaborazione</option>
+          <option>Session in studio</option><option>Altro</option>
+        </select>
+        <textarea class="ff" placeholder="Il tuo messaggio" rows="5" required></textarea>
+        <button type="submit" class="bsub"><i class="fas fa-fire"></i>&nbsp;&nbsp;Trasmetti il Messaggio</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER — DISTORTED TRANSMISSION ═══ -->
+<footer>
+  <div class="ftl"></div>
+  <div class="fi">
+    <div class="fl">The Butchery</div>
+    <div class="ftag">RAW TECHNO — HORROR VISUALS — RITUAL RECORDINGS — MILANO</div>
+    <div class="ffrequency">FREQ: 88.8MHz — LAT: 45.4654°N — LON: 9.1859°E — SIG: ████████</div>
+    <div class="forn" aria-hidden="true"><i class="fas fa-skull"></i><i class="fas fa-cross" style="font-size:.6rem"></i><i class="fas fa-skull"></i></div>
+    <div class="fsoc">
+      <a href="https://www.youtube.com/@TheButcheryMilano" target="_blank" rel="noopener"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.twitch.tv/thebutcherymilano" target="_blank" rel="noopener"><i class="fab fa-twitch"></i></a>
+      <a href="https://www.instagram.com/thebutchery_milano/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+    </div>
+    <p class="fcopy">© 2026 THE BUTCHERY MILANO — TRASMISSIONE CLASSIFICATA — NO COMPROMISE</p>
+  </div>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════
+   THE BUTCHERY — CINEMATIC HORROR JAVASCRIPT ENGINE
+   Loading Boot Sequence + Three.js Chains + Flashlight +
+   Custom Cursor + Glitch + Atmospheric Systems
+═══════════════════════════════════════════════════════════ */
+
+/* ─── LOADING BOOT SEQUENCE ─── */
+(function bootSequence() {
+  const lines = [
+    { t: 'SISTEMA DI TRASMISSIONE THE BUTCHERY v2.025', c: '' },
+    { t: '', c: '' },
+    { t: 'INIZIALIZZAZIONE PROTOCOLLO...', c: '' },
+    { t: '[KERNEL] AVVIO SOTTOPROCESSI RITUALI...', c: '' },
+    { t: '[MEM] CARICAMENTO ARCHIVI OSCURI: 47/50', c: 'warn' },
+    { t: '[WARN] INTEGRITÀ DATI: 88.3% ████████░░', c: 'warn' },
+    { t: '[ERR] FILE #007 CORROTTO — DATI IRRECUPERABILI', c: 'err' },
+    { t: '[AUDIO] DRIVER INDUSTRIALE: OK', c: '' },
+    { t: '[VIDEO] VISUALS HORROR: CARICATI', c: '' },
+    { t: '[NET] CANALE 88.8MHz: ATTIVO', c: '' },
+    { t: '[SEC] LIVELLO ACCESSO: Ω-CLEARANCE', c: 'warn' },
+    { t: '', c: '' },
+    { t: '⚠ ACCESSO NON AUTORIZZATO RILEVATO ⚠', c: 'err' },
+    { t: '⚠ IDENTIFICAZIONE UTENTE NON COMPLETATA ⚠', c: 'err' },
+    { t: '', c: '' },
+    { t: 'PROSEGUENDO UGUALMENTE...', c: 'warn' },
+    { t: 'ACCESSO CONSENTITO — A TUO RISCHIO ███████', c: '' },
+    { t: '', c: '' },
+    { t: 'BENVENUTO NELLA MACELLERIA_', c: '' },
+  ];
+
+  const term = document.getElementById('terminal');
+  const bar = document.getElementById('lbar');
+  const loader = document.getElementById('loader');
+  const nav = document.getElementById('nav');
+
+  function revealLine(i) {
+    if (i >= lines.length) {
+      // done — fade out loader
+      setTimeout(finishLoad, 600);
+      return;
+    }
+    const l = lines[i];
+    const p = document.createElement('p');
+    p.className = 't-line show' + (l.c ? ' t-' + l.c : '') + (i === lines.length - 1 ? ' t-blink' : '');
+    p.textContent = l.t || '\u00A0';
+    term.appendChild(p);
+    term.scrollTop = term.scrollHeight;
+    bar.style.width = Math.round((i / lines.length) * 100) + '%';
+    setTimeout(() => revealLine(i + 1), l.t ? 80 + Math.random() * 60 : 40);
+  }
+
+  function finishLoad() {
+    loader.style.transition = 'opacity 1.2s ease';
+    loader.style.opacity = '0';
+    setTimeout(() => {
+      loader.style.display = 'none';
+      nav.classList.add('visible');
+      document.body.style.cursor = 'none';
+    }, 1200);
+  }
+
+  setTimeout(() => revealLine(0), 400);
+
+  document.getElementById('skipBtn').addEventListener('click', finishLoad);
+})();
+
+/* ─── CUSTOM CURSOR ─── */
+(function initCursor() {
+  const ring = document.getElementById('cursor-ring');
+  const dot  = document.getElementById('cursor-dot');
+  let rx = 0, ry = 0, tx = 0, ty = 0;
+
+  document.addEventListener('mousemove', e => {
+    tx = e.clientX; ty = e.clientY;
+    dot.style.left = tx + 'px';
+    dot.style.top  = ty + 'px';
+  }, { passive: true });
+
+  function animCursor() {
+    rx += (tx - rx) * 0.12;
+    ry += (ty - ry) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  document.querySelectorAll('a, button, .sc, .btn-horror, .btn-ghost-horror').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+
+  document.addEventListener('mousedown', () => document.body.classList.add('cursor-click'));
+  document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-click'));
+})();
+
+/* ─── FLASHLIGHT EFFECT ─── */
+(function initFlashlight() {
+  const fl = document.getElementById('flashlight');
+  let fx = 50, fy = 50;
+  document.addEventListener('mousemove', e => {
+    fx = (e.clientX / window.innerWidth  * 100).toFixed(2);
+    fy = (e.clientY / window.innerHeight * 100).toFixed(2);
+    fl.style.background = `radial-gradient(circle 220px at ${fx}% ${fy}%, transparent 0%, rgba(0,0,0,.14) 35%, rgba(0,0,0,.52) 60%, rgba(0,0,0,.86) 100%)`;
+  }, { passive: true });
+})();
+
+/* ─── GLITCH EFFECT ─── */
+(function initGlitch() {
+  const canvas = document.getElementById('glitch-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  function triggerGlitch() {
+    canvas.style.opacity = '1';
+    const strips = 4 + Math.floor(Math.random() * 6);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < strips; i++) {
+      const y = Math.random() * canvas.height;
+      const h = 2 + Math.random() * 18;
+      const dx = (-20 + Math.random() * 40);
+      ctx.fillStyle = `rgba(${Math.random() > .5 ? '180,0,0' : '0,180,180'},.12)`;
+      ctx.fillRect(dx, y, canvas.width, h);
+    }
+    setTimeout(() => { canvas.style.opacity = '0'; }, 80 + Math.random() * 120);
+  }
+
+  function scheduleGlitch() {
+    const delay = 4000 + Math.random() * 12000;
+    setTimeout(() => { triggerGlitch(); scheduleGlitch(); }, delay);
+  }
+  scheduleGlitch();
+})();
+
+/* ─── THREE.JS CHAIN SYSTEM ─── */
+(function initChains() {
+  const canvas = document.getElementById('chain-canvas');
+  if (!canvas) return;
+
+  const scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x000000, 0.022);
+
+  const cam = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 100);
+  cam.position.set(0, 0, 14);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.75;
+  renderer.physicallyCorrectLights = true;
+
+  /* LIGHTING */
+  scene.add(new THREE.AmbientLight(0x080202, 0.3));
+  const key  = new THREE.PointLight(0xff2200, 7.0, 55, 1.8);  key.position.set(0, 9, 7);  key.castShadow = true; scene.add(key);
+  const fill = new THREE.PointLight(0x180808, 2.5, 35, 2);    fill.position.set(-10, 0, 9); scene.add(fill);
+  const ember= new THREE.PointLight(0xcc4400, 3.2, 30, 1.5);  ember.position.set(9, -5, 6); scene.add(ember);
+  const rim  = new THREE.PointLight(0x6b0000, 4.5, 40, 1.5);  rim.position.set(0, -14, 5);  scene.add(rim);
+  const flkr = new THREE.PointLight(0x8b1a00, 2.2, 20, 2);    flkr.position.set(-3, 5, 8);  scene.add(flkr);
+
+  /* MATERIALS */
+  const mkMat = (color, roughness, metalness, env) => new THREE.MeshStandardMaterial({ color, metalness, roughness, envMapIntensity: env });
+  const mFG   = mkMat(0x2e1c1c, 0.22, 0.97, 1.6);
+  const mMID  = mkMat(0x261818, 0.32, 0.94, 1.2);
+  const mBG   = mkMat(0x1a1010, 0.48, 0.88, 0.7);
+  const mRUST = mkMat(0x220808, 0.58, 0.82, 0.8);
+
+  /* ENV */
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const envRT = pmrem.fromScene(new THREE.Scene());
+  scene.environment = envRT.texture;
+
+  /* LINK GEO */
+  const geoCache = {};
+  function getGeo(rM, rm) {
+    const k = `${rM}_${rm}`;
+    if (!geoCache[k]) geoCache[k] = new THREE.TorusGeometry(rM, rm, 18, 30);
+    return geoCache[k];
+  }
+
+  function mkLink(mat, rM, rm) {
+    const m = new THREE.Mesh(getGeo(rM, rm), mat);
+    m.castShadow = true; m.receiveShadow = true; return m;
+  }
+
+  function buildCol(cfg) {
+    const g = new THREE.Group();
+    for (let i = 0; i < cfg.n; i++) {
+      const l = mkLink(cfg.mat, cfg.rM, cfg.rm);
+      l.position.y = -i * cfg.pitch;
+      if (i % 2 === 0) l.rotation.y = Math.PI / 2;
+      l.rotation.z = (Math.random() - .5) * 0.04;
+      l.position.x = (Math.random() - .5) * cfg.rm * 0.5;
+      g.add(l);
+    }
+    scene.add(g);
+    return g;
+  }
+
+  function sx(f) { return (f - .5) * Math.tan(58 * Math.PI / 360) * 28; }
+
+  const COLS = [
+    {f:sx(.012),z:-8,n:40,pitch:.95,rM:.23,rm:.062,mat:mBG,  spd:.14,ph:0,  sw:.07,swS:.28},
+    {f:sx(.988),z:-8,n:40,pitch:.95,rM:.23,rm:.062,mat:mBG,  spd:.18,ph:1.9,sw:.06,swS:.22},
+    {f:sx(.05), z:-5,n:38,pitch:1.0,rM:.30,rm:.08, mat:mBG,  spd:.16,ph:.7, sw:.10,swS:.30},
+    {f:sx(.95), z:-5,n:38,pitch:1.0,rM:.30,rm:.08, mat:mBG,  spd:.12,ph:2.3,sw:.09,swS:.25},
+    {f:sx(.022),z:-1,n:35,pitch:1.1,rM:.42,rm:.11, mat:mMID, spd:.11,ph:.4, sw:.14,swS:.22},
+    {f:sx(.978),z:-1,n:35,pitch:1.1,rM:.42,rm:.11, mat:mMID, spd:.15,ph:1.4,sw:.12,swS:.26},
+    {f:sx(.065),z: 0,n:33,pitch:1.15,rM:.38,rm:.10,mat:mRUST,spd:.13,ph:1.1,sw:.13,swS:.20},
+    {f:sx(.935),z: 0,n:33,pitch:1.15,rM:.38,rm:.10,mat:mRUST,spd:.10,ph:.6, sw:.11,swS:.24},
+    {f:sx(.004),z: 5,n:27,pitch:1.4, rM:.66,rm:.16,mat:mFG,  spd:.08,ph:.8, sw:.20,swS:.16,fg:true},
+    {f:sx(.996),z: 5,n:27,pitch:1.4, rM:.66,rm:.16,mat:mFG,  spd:.09,ph:2.0,sw:.18,swS:.18,fg:true},
+  ];
+
+  const mMID2 = mMID; // alias for reference
+  const chainObjs = COLS.map(cfg => {
+    const g = buildCol(cfg);
+    g.position.set(cfg.f, 17, cfg.z);
+    if (cfg.fg) {
+      g.traverse(c => { if (c.isMesh) { c.material = c.material.clone(); c.material.transparent = true; c.material.opacity = .62; } });
+    }
+    return { g, cfg };
+  });
+
+  /* BLOOD DROPS */
+  const drops = [];
+  const bMat = new THREE.MeshStandardMaterial({ color: 0x6b0000, metalness: .05, roughness: .85, emissive: 0x180000, emissiveIntensity: .4, transparent: true, opacity: .9 });
+
+  function spawnBlood(cfg) {
+    const m = new THREE.Mesh(new THREE.SphereGeometry(.03 + Math.random() * .07, 7, 7), bMat.clone());
+    m.position.set(cfg.f + (Math.random() - .5) * .35, 12 - Math.floor(Math.random() * 8) * cfg.pitch - .4, cfg.z + (Math.random() - .5) * .2);
+    m.userData = { vy: 0, grav: .0025 + Math.random() * .004, life: .9 + Math.random() * .1, decay: .003 + Math.random() * .003 };
+    scene.add(m); drops.push(m);
+  }
+
+  let scrollY = 0, mx = 0, my = 0;
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; }, { passive: true });
+  document.addEventListener('mousemove', e => { mx = e.clientX / window.innerWidth - .5; my = e.clientY / window.innerHeight - .5; }, { passive: true });
+  window.addEventListener('resize', () => { cam.aspect = window.innerWidth / window.innerHeight; cam.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); }, { passive: true });
+
+  let t = 0, frame = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += .007; frame++;
+
+    cam.position.x += (mx * .45 - cam.position.x) * .018;
+    cam.position.y += (-my * .28 - scrollY * .002 - cam.position.y) * .018;
+    cam.lookAt(cam.position.x * .1, cam.position.y * .1 - scrollY * .003, 0);
+
+    key.intensity   = 6.5  + Math.sin(t * 1.7) * .9  + Math.sin(t * 4.3) * .3;
+    key.position.x  = Math.sin(t * .35) * 2.5;
+    rim.intensity   = 4.2  + Math.sin(t * 2.2) * .7;
+    ember.intensity = 3.0  + Math.sin(t * 1.3) * .5;
+    flkr.intensity  = 1.9  + Math.sin(t * 8.1) * .9;
+
+    chainObjs.forEach(({ g, cfg }) => {
+      const sway = Math.sin(t * cfg.swS + cfg.ph) * cfg.sw;
+      const tx2 = cfg.f + sway + mx * .14 * (cfg.z > 0 ? 2.2 : .65);
+      g.position.x += (tx2 - g.position.x) * .014;
+      g.position.y = 17 - scrollY * (cfg.z > 2 ? .006 : cfg.z > -2 ? .004 : .0025);
+      g.rotation.z = sway * .032;
+      g.children.forEach((l, i) => { const w = Math.sin(t * 1.15 + i * .4 + cfg.ph) * .012; l.rotation.z += (w - l.rotation.z) * .08; });
+    });
+
+    if (frame % 210 === 0 && Math.random() < .65) spawnBlood(COLS[Math.floor(Math.random() * COLS.length)]);
+
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i];
+      d.userData.vy -= d.userData.grav; d.position.y += d.userData.vy;
+      d.userData.life -= d.userData.decay; d.material.opacity = Math.max(0, d.userData.life);
+      if (d.userData.life <= 0) { scene.remove(d); d.geometry.dispose(); d.material.dispose(); drops.splice(i, 1); }
+    }
+
+    renderer.render(scene, cam);
+  }
+  animate();
+})();
+
+/* ─── SECTION CHAIN RULES (2D Canvas) ─── */
+function drawChainRule(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = el.offsetWidth || 1100, H = 44;
+  el.width = W * dpr; el.height = H * dpr;
+  el.style.width = W + 'px'; el.style.height = H + 'px';
+  const ctx = el.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const cy = H / 2, LW = 22, LH = 13, PITCH = 23;
+  const n = Math.ceil(W / PITCH) + 2;
+  const lg = ctx.createLinearGradient(0, 0, W, 0);
+  lg.addColorStop(0, 'rgba(90,0,0,0)'); lg.addColorStop(.12, 'rgba(90,0,0,.5)');
+  lg.addColorStop(.5, 'rgba(139,0,0,.2)'); lg.addColorStop(.88, 'rgba(90,0,0,.5)'); lg.addColorStop(1, 'rgba(90,0,0,0)');
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy);
+  ctx.strokeStyle = lg; ctx.lineWidth = 1; ctx.stroke();
+
+  for (let i = 0; i < n; i++) {
+    const cx = 3 + i * PITCH, horiz = i % 2 === 0;
+    const lw = horiz ? LW : LH, lh = horiz ? LH : LW;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,.95)'; ctx.shadowBlur = 6; ctx.shadowOffsetX = 1.5; ctx.shadowOffsetY = 2.5;
+    const bg = ctx.createLinearGradient(cx - lw/2, cy - lh/2, cx + lw/2, cy + lh/2);
+    bg.addColorStop(0, 'rgba(72,50,50,.95)'); bg.addColorStop(.2, 'rgba(58,40,40,.95)');
+    bg.addColorStop(.48, 'rgba(20,10,10,.95)'); bg.addColorStop(.75, 'rgba(44,30,30,.95)'); bg.addColorStop(1, 'rgba(28,16,16,.92)');
+    ctx.beginPath(); ctx.ellipse(cx, cy, lw/2, lh/2, 0, 0, Math.PI * 2);
+    ctx.fillStyle = bg; ctx.fill();
+    ctx.strokeStyle = 'rgba(88,58,58,.88)'; ctx.lineWidth = 1.6; ctx.stroke(); ctx.restore();
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(cx, cy, lw/2*.43, lh/2*.43, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(2,0,0,.98)'; ctx.fill(); ctx.restore();
+    ctx.save();
+    ctx.beginPath(); ctx.ellipse(cx - lw*.14, cy - lh*.18, lw*.1, lh*.08, -.3, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(210,170,140,.16)'; ctx.fill(); ctx.restore();
+    if (i % 3 === 0) {
+      const dh = 8 + Math.random() * 14;
+      ctx.save();
+      const dg = ctx.createLinearGradient(cx, cy + lh/2, cx, cy + lh/2 + dh);
+      dg.addColorStop(0, 'rgba(100,0,0,.58)'); dg.addColorStop(1, 'rgba(50,0,0,0)');
+      ctx.beginPath();
+      ctx.moveTo(cx - 1.5, cy + lh/2);
+      ctx.quadraticCurveTo(cx + 2.2, cy + lh/2 + dh * .6, cx, cy + lh/2 + dh);
+      ctx.quadraticCurveTo(cx - 2.2, cy + lh/2 + dh * .6, cx - 1.5, cy + lh/2);
+      ctx.fillStyle = dg; ctx.fill(); ctx.restore();
+    }
+  }
+}
+['cr1', 'cr2', 'cr3', 'cr4', 'cr5'].forEach(drawChainRule);
+
+/* ─── FOG / PARTICLES ─── */
+(function buildFog() {
+  const fw = document.createElement('div');
+  fw.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:96;overflow:hidden';
+  document.body.appendChild(fw);
+  const st = document.createElement('style');
+  st.textContent = '#fogw div{position:absolute;filter:blur(78px);animation:fogD var(--ft) ease-in-out var(--fd) infinite alternate}@keyframes fogD{from{transform:translate(var(--x1),var(--y1))}to{transform:translate(var(--x2),var(--y2)) scale(1.1)}}';
+  fw.id = 'fogw';
+  document.head.appendChild(st);
+  [
+    { top:'0',left:'-80%',w:'260%',h:'40%',bg:'radial-gradient(ellipse 52% 36% at 50% 50%,rgba(18,0,0,.14),transparent 70%)',ft:'38s',fd:'0s',x1:'-9%',y1:'4%',x2:'9%',y2:'-4%' },
+    { top:'24%',left:'-60%',w:'220%',h:'35%',bg:'radial-gradient(ellipse 44% 28% at 30% 50%,rgba(10,0,0,.1),transparent 70%)',ft:'29s',fd:'-8s',x1:'7%',y1:'-3%',x2:'-7%',y2:'3%' },
+    { top:'55%',left:'-70%',w:'240%',h:'38%',bg:'radial-gradient(ellipse 48% 32% at 68% 50%,rgba(7,0,0,.08),transparent 70%)',ft:'44s',fd:'-17s',x1:'-6%',y1:'-4%',x2:'6%',y2:'4%' },
+    { bottom:'0',left:'-20%',right:'-20%',h:'35%',bg:'linear-gradient(to top,rgba(5,0,0,.45),transparent)',ft:'15s',fd:'-5s',x1:'0',y1:'5%',x2:'0',y2:'-5%' },
+  ].forEach(l => {
+    const d = document.createElement('div');
+    let cs = `height:${l.h};background:${l.bg};--ft:${l.ft};--fd:${l.fd};--x1:${l.x1};--y1:${l.y1};--x2:${l.x2};--y2:${l.y2}`;
+    if (l.top) cs += `;top:${l.top}`;
+    if (l.bottom) cs += `;bottom:${l.bottom}`;
+    if (l.left) cs += `;left:${l.left}`;
+    if (l.right) cs += `;right:${l.right}`;
+    if (l.w) cs += `;width:${l.w}`;
+    d.style.cssText = cs;
+    fw.appendChild(d);
+  });
+  document.addEventListener('mousemove', e => {
+    const x = (e.clientX / window.innerWidth - .5) * 16;
+    const y = (e.clientY / window.innerHeight - .5) * 10;
+    fw.style.transform = `translate(${x}px,${y}px)`;
+  }, { passive: true });
+
+  // Dust
+  const pw = document.createElement('div');
+  pw.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:95;overflow:hidden';
+  document.body.appendChild(pw);
+  const ps = document.createElement('style');
+  ps.textContent = '.dp{position:absolute;border-radius:50%;background:rgba(140,90,70,.1);animation:dpf var(--t) ease-in-out var(--dl) infinite alternate}@keyframes dpf{from{transform:translate(0,0) scale(1)}to{transform:translate(var(--dx),var(--dy)) scale(var(--ds))}}';
+  document.head.appendChild(ps);
+  for (let i = 0; i < 20; i++) {
+    const d = document.createElement('div');
+    const sz = 1 + Math.random() * 3;
+    d.className = 'dp';
+    d.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;width:${sz}px;height:${sz}px;--t:${7+Math.random()*15}s;--dl:${-Math.random()*10}s;--dx:${-18+Math.random()*36}px;--dy:${-30+Math.random()*60}px;--ds:${.3+Math.random()*1.2}`;
+    pw.appendChild(d);
+  }
+})();
+
+/* ─── SECRET SECTION ─── */
+document.getElementById('secretTrigger').addEventListener('click', function() {
+  document.getElementById('secretContent').classList.toggle('revealed');
+  this.style.color = 'rgba(139,0,0,.4)';
+});
+
+/* ─── MOBILE MENU ─── */
+const ham = document.getElementById('ham'), mn = document.getElementById('mnav'), mx3 = document.getElementById('mx');
+function mo() { mn.classList.add('open'); mn.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+function mc() { mn.classList.remove('open'); mn.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+ham.addEventListener('click', mo); mx3.addEventListener('click', mc);
+document.querySelectorAll('.ml').forEach(l => l.addEventListener('click', mc));
+document.addEventListener('keydown', e => { if (e.key === 'Escape') mc(); });
+
+/* ─── FORM ─── */
+function fsubmit(e) {
+  e.preventDefault();
+  const b = e.target.querySelector('.bsub');
+  b.innerHTML = '<i class="fas fa-check"></i>&nbsp;&nbsp;Trasmissione Ricevuta';
+  b.style.background = 'linear-gradient(135deg,#0a2800,#1a5000,#0a2800)';
+  setTimeout(() => { b.innerHTML = '<i class="fas fa-fire"></i>&nbsp;&nbsp;Trasmetti il Messaggio'; b.style.background = ''; e.target.reset(); }, 3500);
+}
+
+/* ─── HOVER GLITCH on set cards ─── */
+document.querySelectorAll('.sc').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    card.style.filter = 'saturate(1.1)';
+    setTimeout(() => { card.style.filter = ''; }, 100);
+  });
+});
+
+/* ─── FLICKER NAV ─── */
+(function flickerNav() {
+  const logo = document.querySelector('.nav-logo');
+  if (!logo) return;
+  setInterval(() => {
+    if (Math.random() < .04) {
+      logo.style.opacity = '.2';
+      setTimeout(() => { logo.style.opacity = '1'; }, 60 + Math.random() * 80);
+    }
+  }, 500);
+})();
+</script>
+</body>
+</html>
+'''
+
+PAGE = PAGE.replace('##LOGO##', LOGO).replace('##CLEAV##', CLEAV)
+
+with open('/mnt/user-data/outputs/index.html', 'w') as f:
+    f.write(PAGE)
+print(f"Done: {len(PAGE)//1024} KB")
+BUILDEOF
+python3 /home/claude/build.py
+Output
+
+Done: 249 KB
